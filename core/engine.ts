@@ -1,17 +1,11 @@
-namespace TSE {
+namespace Nucleo {
 
 
-    /**
-     * Main game engine class
-     */
     export class Engine {
 
         private _canvas: HTMLCanvasElement;
         private _shader: Shader;
 
-        /**
-         * creates a new engine
-         */
         public constructor() {
         }
 

@@ -1,4 +1,4 @@
-namespace TSE {
+namespace Nucleo {
 
     /**
      * WebGL2 rendering context
@@ -12,8 +12,8 @@ namespace TSE {
 
         /**
          * Init WebGL2, optionally using element id
-         * @param elementId The id of the element
-         * @returns 
+         * @param elementId The id of the element(optional)
+         * @returns Canvas html element
          */
         public static init(elementId?: string): HTMLCanvasElement {
             let canvas: HTMLCanvasElement;

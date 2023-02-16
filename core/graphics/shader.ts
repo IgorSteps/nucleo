@@ -1,10 +1,16 @@
-namespace TSE {
+namespace Nucleo {
 
     export class Shader {
 
         private _name: string;
         private _program: WebGLProgram
 
+        /**
+         * 
+         * @param name Name of the shader
+         * @param vertSource Vertex shader
+         * @param fragSource Fragment shader
+         */
         constructor(name:string, vertSource: string, fragSource: string) {
             this._name = name;
             let vertexShader = this.loadShader(vertSource, gl.VERTEX_SHADER);
