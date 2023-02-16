@@ -106,7 +106,7 @@ var TSE;
             TSE.gl.linkProgram(this._program);
             if (!TSE.gl.getProgramParameter(this._program, TSE.gl.LINK_STATUS)) {
                 var info = TSE.gl.getProgramInfoLog(this._program);
-                throw new Error(`Could not link WebGL program ${this._name} : ${info}`);
+                throw new Error(`error linking shader ${this._name} : ${info}`);
             }
         }
     }
