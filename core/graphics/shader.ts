@@ -2,8 +2,8 @@ namespace Nucleo {
 
     export class Shader {
 
-        private _name: string;
-        private _program: WebGLProgram
+        private m_Name: string;
+        public m_Program: WebGLProgram
 
         /**
          * 
@@ -12,19 +12,20 @@ namespace Nucleo {
          * @param fragSource Fragment shader
          */
         constructor(name:string, vertSource: string, fragSource: string) {
-            this._name = name;
+            this.m_Name = name;
             let vertexShader = this.loadShader(vertSource, gl.VERTEX_SHADER);
             let fragShader = this.loadShader(fragSource, gl.FRAGMENT_SHADER);
 
             this.createShaderProgram(vertexShader, fragShader);
         }
 
-        public get name():string {
-            return this._name;
+        public get name():string { 
+            return this.m_Name;
         }
 
+
         public use():void {
-            gl.useProgram(this._program);
+            gl.useProgram(this.m_Program);
         }
 
 
@@ -35,23 +36,23 @@ namespace Nucleo {
             gl.compileShader(shader);
             if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
                 var info = gl.getShaderInfoLog(shader);
-                throw new Error(`error compiling shader '${this._name}' : ${info}`);
+                throw new Error(`error compiling shader '${this.m_Name}' : ${info}`);
             }
 
             return shader;
         }
 
         private createShaderProgram(vertShader: WebGLShader, fragShader: WebGLShader): void {
-            this._program = gl.createProgram();
+            this.m_Program = gl.createProgram();
 
-            gl.attachShader(this._program, vertShader)
-            gl.attachShader(this._program, fragShader)
+            gl.attachShader(this.m_Program, vertShader)
+            gl.attachShader(this.m_Program, fragShader)
 
-            gl.linkProgram(this._program);
+            gl.linkProgram(this.m_Program);
 
-            if ( !gl.getProgramParameter( this._program, gl.LINK_STATUS) ) {
-                var info = gl.getProgramInfoLog(this._program);
-                throw new Error(`error linking shader ${this._name} : ${info}`);
+            if ( !gl.getProgramParameter( this.m_Program, gl.LINK_STATUS) ) {
+                var info = gl.getProgramInfoLog(this.m_Program);
+                throw new Error(`error linking shader ${this.m_Name} : ${info}`);
             }
         }
     }
