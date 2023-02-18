@@ -5,8 +5,7 @@ namespace Nucleo {
 
         private m_Canvas: HTMLCanvasElement;
         private m_Shader: Shader;
-        private m_Buffer: WebGLBuffer;
-        private m_Vao : WebGLVertexArrayObject;
+        private m_Buffer: GLBuffer;
 
         public constructor() {
         }
@@ -40,39 +39,33 @@ namespace Nucleo {
         private loop(): void {
             gl.clear(gl.COLOR_BUFFER_BIT);
 
-            // Bind the attribute/buffer set we want.
-            gl.bindVertexArray(this.m_Vao);
-            gl.drawArrays(gl.TRIANGLES, 0, 3);
+            let colorPos = this.m_Shader.getUniformLocation("u_color");
+            gl.uniform4f(colorPos, 1, 0.5, 0, 1);
+            this.m_Buffer.bindVAO();
+            this.m_Buffer.draw();
 
             requestAnimationFrame( this.loop.bind( this ) );
         }
 
         private createBuffer():void {
-            // look up where the vertex data needs to go.
-            let positionAttributeLocation = gl.getAttribLocation(this.m_Shader.m_Program, "a_position");
-            this.m_Buffer = gl.createBuffer();
-            // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.m_Buffer);
-
+            this.m_Buffer = new GLBuffer(3);
+            
+            let positionAttribute = new AttributeInfo();
+            positionAttribute.location = this.m_Shader.getAttributeLocation("a_position");
+            positionAttribute.size = 3;
+            positionAttribute.offset = 0;
+            this.m_Buffer.addAttributeLocation(positionAttribute);
+            this.m_Buffer.bind();
+            
             let vertices = [
                 0, 0, 0,
                 0, .5, 0,
                 .5, .5, 0,
             ];
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+            this.m_Buffer.pushBackData(vertices)
+            this.m_Buffer.upload(); 
 
-            // create m_Vao
-            this.m_Vao = gl.createVertexArray();
-            gl.bindVertexArray(this.m_Vao); // bind to it
-
-            // turn on
-            gl.enableVertexAttribArray(positionAttributeLocation);
-            // how to get data out of position buffer
-            gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-
-
-            //gl.bindBuffer(gl.ARRAY_BUFFER, undefined);
+            this.m_Buffer.unbind();
         }
 
         private loadShaders(): void {
@@ -87,11 +80,12 @@ namespace Nucleo {
             let fragShader = `#version 300 es
 
                 precision highp float;
-                
+                uniform vec4 u_color;
                 out vec4 outColor;
                 
+                
                 void main() {
-                    outColor = vec4(1, 1, 1, 1);
+                    outColor = u_color;
                 }`;
 
             this.m_Shader = new Shader("basic", vertShader, fragShader);
