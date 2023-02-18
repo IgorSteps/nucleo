@@ -55,6 +55,7 @@ namespace Nucleo {
             positionAttribute.size = 3;
             positionAttribute.offset = 0;
             this.m_Buffer.addAttributeLocation(positionAttribute);
+            
             this.m_Buffer.bind();
             
             let vertices = [
