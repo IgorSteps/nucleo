@@ -5,7 +5,7 @@ namespace Nucleo {
 
         private m_Canvas: HTMLCanvasElement;
         private m_Shader: Shader;
-        private m_Buffer: GLBuffer;
+        private m_Sprite: Sprite;
 
         public constructor() {
         }
@@ -19,7 +19,8 @@ namespace Nucleo {
             this.loadShaders();
             this.m_Shader.use();
 
-            this.createBuffer();
+            this.m_Sprite = new Sprite("test");
+            this.m_Sprite.load();
 
             this.resize()
             this.loop();
@@ -41,33 +42,11 @@ namespace Nucleo {
 
             let colorPos = this.m_Shader.getUniformLocation("u_color");
             gl.uniform4f(colorPos, 1, 0.5, 0, 1);
-            this.m_Buffer.bindVAO();
-            this.m_Buffer.draw();
+            this.m_Sprite.draw();
 
             requestAnimationFrame( this.loop.bind( this ) );
         }
 
-        private createBuffer():void {
-            this.m_Buffer = new GLBuffer(3);
-            
-            let positionAttribute = new AttributeInfo();
-            positionAttribute.location = this.m_Shader.getAttributeLocation("a_position");
-            positionAttribute.size = 3;
-            positionAttribute.offset = 0;
-            this.m_Buffer.addAttributeLocation(positionAttribute);
-            
-            this.m_Buffer.bind();
-            
-            let vertices = [
-                0, 0, 0,
-                0, .5, 0,
-                .5, .5, 0,
-            ];
-            this.m_Buffer.pushBackData(vertices)
-            this.m_Buffer.upload(); 
-
-            this.m_Buffer.unbind();
-        }
 
         private loadShaders(): void {
             let vertShader = `#version 300 es
