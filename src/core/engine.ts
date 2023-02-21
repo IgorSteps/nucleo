@@ -1,4 +1,4 @@
-import * as m from "./gl/gl";
+import {gl, GLUtilities} from "./gl/gl";
 import Sprite from "./graphics/sprite";
 import Shader from "./gl/shader";
 
@@ -14,10 +14,10 @@ import Shader from "./gl/shader";
         }
 
         public start(): void {
-            this.m_Canvas = m.GLUtilities.init();
+            this.m_Canvas = GLUtilities.init();
 
 
-            m.gl.clearColor(0,0,0,1);
+            gl.clearColor(0,0,0,1);
 
             this.loadShaders();
             this.m_Shader.use();
@@ -36,15 +36,15 @@ import Shader from "./gl/shader";
                 this.m_Canvas.height = window.innerHeight;
             }
 
-            m.gl.viewport(0,0,this.m_Canvas.width, this.m_Canvas.height);
+            gl.viewport(0,0,this.m_Canvas.width, this.m_Canvas.height);
         }
 
 
         private loop(): void {
-            m.gl.clear(m.gl.COLOR_BUFFER_BIT);
+            gl.clear(gl.COLOR_BUFFER_BIT);
 
             let colorPos = this.m_Shader.getUniformLocation("u_color");
-            m.gl.uniform4f(colorPos, 1, 0.5, 0, 1);
+            gl.uniform4f(colorPos, 1, 0.5, 0, 1);
             this.m_Sprite.draw();
 
             requestAnimationFrame( this.loop.bind( this ) );

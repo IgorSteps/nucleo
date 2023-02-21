@@ -1,7 +1,13 @@
 # Nucleo Game Engine
 
-Built with TS and WebGL2
+Built with TS and WebGL2.
 
 # Running
-- Compile `tsc`
-- Serve `https-serve -o`
+Compile 
+```
+npm run build
+```
+Serve 
+```
+npm run develop
+```
