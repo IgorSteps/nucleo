@@ -1,10 +1,6 @@
 # TS definition files
 *.d.ts
 
-# JS generated files
-*.js
-*.map
-
 # VScode files
 *.vscode
 
