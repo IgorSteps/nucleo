@@ -4,5 +4,8 @@
 # VScode files
 *.vscode
 
-# node modules
+# node modules 
 node_modules
+
+# and package-lock
+package-lock.json
