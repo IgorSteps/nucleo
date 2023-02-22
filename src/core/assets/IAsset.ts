@@ -4,10 +4,10 @@ export interface IAsset {
     /**
      * Asset name
      */
-    readonly name: string;
+    readonly Name: string;
 
     /**
      * Asset data
      */
-    readonly data: any;
+    readonly Data: any;
 }

@@ -8,5 +8,5 @@ export default interface IAssetLoader{
 
     /** Supported file extensions eg. png */
     readonly supportedExts: string[];
-    loadAsset(assetName: string): IAsset;
+    loadAsset(assetName: string): void;
 }
