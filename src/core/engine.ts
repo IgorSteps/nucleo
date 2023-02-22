@@ -24,11 +24,13 @@ export default class Engine {
 
         this.m_Model = mat4.create();
         this.m_Projection = mat4.create();
-        // 0,0 is bottom left
-        this.m_Projection = mat4.ortho(this.m_Projection, 0.0, this.m_Canvas.width, 0.0, this.m_Canvas.height, -100.0, 100.0);
+        // 0,0 is top left
+        this.m_Projection = mat4.ortho(this.m_Projection, 0.0, this.m_Canvas.width, this.m_Canvas.height, 0.0, -100.0, 100.0);
+        
+        
         this.m_Sprite = new Sprite("test");
         this.m_Sprite.load();
-        this.m_Sprite.m_Position[0] = 200;
+        this.m_Sprite.m_Position[0] = 20;
 
         this.resize()
         this.loop();
@@ -41,8 +43,7 @@ export default class Engine {
             this.m_Canvas.height = window.innerHeight;
         }
 
-        //gl.viewport(0, 0, this.m_Canvas.width, this.m_Canvas.height);
-        gl.viewport(-1, 1, -1, 1);
+        gl.viewport(0, 0, this.m_Canvas.width, this.m_Canvas.height);
     }
 
 
