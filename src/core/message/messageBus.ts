@@ -11,39 +11,36 @@ export default class MessageBus {
     private constructor() {}
 
     public static addSubscription(code: string, handler: IMessageHadnler): void {
-        let subscription = MessageBus.m_Subscriptions[code];
-        if (subscription !== undefined) {
+        if (MessageBus.m_Subscriptions[code] === undefined) {
             MessageBus.m_Subscriptions[code] = [];
         } 
-        if (subscription.indexOf(handler) !== -1) {
+        if (MessageBus.m_Subscriptions[code].indexOf(handler) !== -1) {
             console.warn(`Attempting to add duplicate handler to code ${code}. Subscription not added`)
         } else {
-            subscription.push(handler);
+            MessageBus.m_Subscriptions[code].push(handler);
         }
     }
 
     public static removeSubscription(code: string, handler: IMessageHadnler): void {
-        let subscription = MessageBus.m_Subscriptions[code];
-        if (subscription === undefined) {
+        if (MessageBus.m_Subscriptions[code] === undefined) {
             console.warn(`Can't unsubscribe thandelr from code ${code}, because this code is not subscribed to.`);
             return;
         } 
 
-        let nodeIdx = subscription.indexOf(handler);
+        let nodeIdx = MessageBus.m_Subscriptions[code].indexOf(handler);
         if (nodeIdx !== -1) {
-            subscription.splice(nodeIdx, 1)
+            MessageBus.m_Subscriptions[code].splice(nodeIdx, 1)
         }
     }
 
     public static post(msg: Message):void {
-        console.log(`Message ${msg} posted`);
+        console.log("Message posted", msg);
         
-        let handlers = MessageBus.m_Subscriptions[msg.Code];
-        if (handlers===undefined) {
+        if (MessageBus.m_Subscriptions[msg.Code]===undefined) {
             return;
         }
 
-        handlers.forEach( (h: IMessageHadnler) => {
+        MessageBus.m_Subscriptions[msg.Code].forEach( (h: IMessageHadnler) => {
             if(msg.Priority === MessagePriority.HIGH) {
                 h.onMessage(msg);
             } else {
