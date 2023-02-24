@@ -56,7 +56,6 @@ export default class Engine {
 
         // set uniforms
         let colorPos = this.m_Shader.getUniformLocation("u_tint");
-        //gl.uniform4f(colorPos, 1, 0.5, 0, 1);
         gl.uniform4f(colorPos, 1, 1, 1, 1);
 
         let projPos = this.m_Shader.getUniformLocation("u_projection");

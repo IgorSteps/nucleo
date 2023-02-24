@@ -78,7 +78,7 @@ export default class Texture implements IMessageHadnler{
     
     public onMessage(message: Message): void {
         if(message.Code === MSG_ASSET_LOADER_ASSET_LOADED + this.m_Name) {
-            console.log("loaded:", message.Context)
+            console.debug(this.m_Name + " loaded:", message.Context)
             this.loadTextureFromAsset(message.Context as ImageAsset);
         }
 
