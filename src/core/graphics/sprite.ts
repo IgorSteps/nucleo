@@ -1,7 +1,9 @@
-import { vec3 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import { gl } from '../gl/gl';
 import {GLBuffer, AttributeInfo} from '../gl/glBuffer'
 import Shader from '../gl/shader';
+import Material from './material';
+import MaterialManager from './materialManager';
 import Texture from './texture';
 import TextureManager from './textureManager';
 export default class Sprite {
@@ -10,23 +12,28 @@ export default class Sprite {
     private m_Width: number;
     private m_Height: number;
 
+    private m_Model: mat4
+
     private m_Buffer: GLBuffer;
-    private m_Texture: Texture;
-    private m_TextureName: string;
+    private m_Material: Material;
+    private m_MaterialName: string;
 
     public m_Position: vec3 = vec3.create();
 
-    constructor(name: string, textureName: string, width: number = 100, height: number = 100) {
+    constructor(name: string, materialName: string, width: number = 100, height: number = 100) {
         this.m_Name = name;
         this.m_Height = height;
         this.m_Width = width;
-        this.m_TextureName = textureName;
-        this.m_Texture = TextureManager.getTexture(textureName);
+        this.m_MaterialName = materialName;
+        this.m_Material = MaterialManager.getMaterial(this.m_MaterialName);
+        this.m_Model = mat4.create()
     }
 
     public destroy(): void {
         this.m_Buffer.destroy();
-        TextureManager.releaseTexture(this.m_TextureName);
+        MaterialManager.releaseMaterial(this.m_MaterialName);
+        this.m_Material = undefined;
+        this.m_MaterialName = undefined;
     }
 
     public get name(): string {
@@ -75,9 +82,18 @@ export default class Sprite {
 
     public draw(shader: Shader): void {
 
-        this.m_Texture.activateAndBind(0);
-        let diffuseLocation = shader.getUniformLocation("u_diffuse");
-        gl.uniform1i(diffuseLocation, 0);
+        let modelPos = shader.getUniformLocation("u_model");
+        gl.uniformMatrix4fv(modelPos, false, new Float32Array(mat4.translate(mat4.create(), this.m_Model, this.m_Position)))
+
+        let colorPos = shader.getUniformLocation("u_tint");
+        gl.uniform4fv(colorPos, this.m_Material.tint.toFloat32Array());
+
+        if(this.m_Material.diffuseTexture !== undefined)
+        {
+            this.m_Material.diffuseTexture.activateAndBind(0);
+            let diffuseLocation = shader.getUniformLocation("u_diffuse");
+            gl.uniform1i(diffuseLocation, 0);
+        }
 
 
         this.m_Buffer.bindVAO();
