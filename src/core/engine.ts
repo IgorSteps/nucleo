@@ -56,6 +56,8 @@ export default class Engine {
         }
 
         gl.viewport(0, 0, this.m_Canvas.width, this.m_Canvas.height);
+        this.m_Projection = mat4.ortho(this.m_Projection, 0.0, this.m_Canvas.width, this.m_Canvas.height, 0.0, -100.0, 100.0);
+
     }
 
 

@@ -1,5 +1,6 @@
 import { mat4 } from "gl-matrix";
 import { re } from "mathjs";
+import Component from "../components/component";
 import Shader from "../gl/shader";
 import Transform from "../math/transform";
 import Scene from "./scene";
@@ -12,6 +13,8 @@ export default class SimObject {
     private m_Scene: Scene; 
     private m_LocalMatrix: mat4 = mat4.create();
     private m_WorldMatrix: mat4 = mat4.create();
+
+    private m_Components: Component[] = [];
 
     public Name: string;
     public Transform: Transform = new Transform();
@@ -69,23 +72,56 @@ export default class SimObject {
         return undefined;
     }
 
+    public addComponent(component: Component): void {
+        this.m_Components.push(component);
+        component.setOwner(this);
+    }
+
     public load(): void {
         this.m_IsLoaded = true;
+
+        for (let c of this.m_Components) {
+            c.load();
+        }
+
         for(let c of this.m_Children) {
             c.load()
         }
     }
 
     public update(dt: number): void {
+
+        this.m_LocalMatrix = this.Transform.getTransformationMatrix();
+        this.updateWorldMatrix((this.m_Parent !== undefined) ? this.m_Parent.worldMatrix : undefined);
+
+        for (let c of this.m_Components) {
+            c.update(dt);
+        }
+
         for(let c of this.m_Children) {
             c.update(dt)
         }
     }
 
     public render(shader: Shader): void {
+        for (let c of this.m_Components) {
+            c.render(shader);
+        }
+
         for(let c of this.m_Children) {
             c.render(shader)
         }
+    }
+
+
+    private updateWorldMatrix(parentWorldMatrix: mat4) {
+        if(parentWorldMatrix !== undefined) {
+            mat4.multiply(this.worldMatrix, parentWorldMatrix, this.m_LocalMatrix);
+        } else {
+            mat4.copy(this.m_WorldMatrix, this.m_LocalMatrix);
+        }
+
+
     }
 
 
