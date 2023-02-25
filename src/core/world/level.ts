@@ -1,5 +1,6 @@
 import Shader from "../gl/shader";
 import Scene from "./scene";
+import SimObject from "./simObject";
 
 export enum LevelState {
     UNINITILISED,
@@ -13,6 +14,7 @@ export default class Level {
     private m_Descritpion: string;
     private m_Scene: Scene;
     private m_State: LevelState = LevelState.UNINITILISED;
+    private m_GlobalId: number = -1;
 
     constructor(id: number, name: string, description: string) {
         this.m_Id = id;
@@ -35,6 +37,18 @@ export default class Level {
 
     public get scene(): Scene {
         return this.m_Scene;
+    }
+
+    public init(levelData: any): void {
+        if(levelData.objects === undefined) {
+            throw new Error("Level init error: objects are missing");
+        }
+
+        for(let o in levelData.objects) {
+            let obj = levelData.obejcts[o];
+
+            this.loadSimObject(obj, this.m_Scene.root);
+        }
     }
 
     public load(): void {
@@ -64,5 +78,32 @@ export default class Level {
 
     public onActivated(): void {}
     public onDeactived(): void {}
+
+    private loadSimObject(dataSection: any, parent: SimObject): void {
+        let name:string;
+        if(dataSection.name !== undefined) {
+            name = String(dataSection.name);
+        }
+
+        this.m_GlobalId++;
+        let simObject = new SimObject(this.m_GlobalId, name, this.m_Scene);
+        
+        if(dataSection.transform !== undefined) {
+            simObject.Transform.setFromJson(dataSection.transform);
+        }
+        
+        
+        if(dataSection.children !== undefined) {
+            for(let o in dataSection.children) {
+                let obj = dataSection.children[o];
+                this.loadSimObject(obj, simObject);
+            }
+        }
+
+        if(parent !== undefined) {
+            parent.addChild(simObject);
+        }
+
+    }
 
 }
