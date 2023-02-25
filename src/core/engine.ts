@@ -8,36 +8,41 @@ import BasicShader from "./gl/shaders/basicShader";
 import MaterialManager from "./graphics/materialManager";
 import Material from "./graphics/material";
 import Colour from "./graphics/colour";
+import LevelManager from "./world/levelManager";
 
 export default class Engine {
 
     private m_Canvas: HTMLCanvasElement;
     private m_BasicShader: Shader;
-    private m_Sprite: Sprite;
-    private m_Projection: mat4
+    private m_Projection: mat4;
 
     public constructor() {}
 
     public start(): void {
+        // Init canvas
         this.m_Canvas = GLUtilities.init();
 
+        // Init Asset manager
         AssetManager.init();
+
+
         gl.clearColor(0,0,0,1);
 
+        // Load Shader
         this.m_BasicShader = new BasicShader();
         this.m_BasicShader.use();
 
+        // Set up projection matrix
         this.m_Projection = mat4.create();
-        // 0,0 is top left
         this.m_Projection = mat4.ortho(this.m_Projection, 0.0, this.m_Canvas.width, this.m_Canvas.height, 0.0, -100.0, 100.0);
         
         // Load Materials
         MaterialManager.registerMaterial(new Material("crate", "../assets/textures/crate.jpg", new Colour(255, 128, 0, 255)));
-        
-        // Load
-        this.m_Sprite = new Sprite("test", "crate");
-        this.m_Sprite.load();
-        this.m_Sprite.m_Position[0] = 20;
+
+        // Load test level
+        let levelId = LevelManager.createTestLvl();
+        LevelManager.changeLevel(levelId);
+
 
         this.resize()
         this.loop();
@@ -56,16 +61,15 @@ export default class Engine {
 
     private loop(): void {
         MessageBus.update(0);
+        LevelManager.update(0);
 
         gl.clear(gl.COLOR_BUFFER_BIT);
 
+        
         // set uniforms
         let projPos = this.m_BasicShader.getUniformLocation("u_projection");
         gl.uniformMatrix4fv(projPos, false, new Float32Array(this.m_Projection))
-
-        
-
-        this.m_Sprite.draw(this.m_BasicShader);
+        LevelManager.render(this.m_BasicShader);
 
         requestAnimationFrame( this.loop.bind( this ) );
     }
