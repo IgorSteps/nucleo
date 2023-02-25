@@ -80,10 +80,10 @@ export default class Sprite {
 
     }
 
-    public draw(shader: Shader): void {
+    public draw(shader: Shader, model: mat4): void {
 
-        let modelPos = shader.getUniformLocation("u_model");
-        gl.uniformMatrix4fv(modelPos, false, new Float32Array(mat4.translate(mat4.create(), this.m_Model, this.m_Position)))
+        let modelLocation = shader.getUniformLocation("u_model");
+        gl.uniformMatrix4fv(modelLocation, false, model)
 
         let colorPos = shader.getUniformLocation("u_tint");
         gl.uniform4fv(colorPos, this.m_Material.tint.toFloat32Array());
