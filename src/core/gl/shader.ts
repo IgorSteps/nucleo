@@ -1,7 +1,7 @@
 
 import {gl} from '../gl/gl'
 
-export default class Shader {
+export default abstract class Shader {
 
         private m_Name: string;
         private m_Program: WebGLProgram
@@ -14,18 +14,21 @@ export default class Shader {
          * @param vertSource Vertex shader
          * @param fragSource Fragment shader
          */
-        constructor(name:string, vertSource: string, fragSource: string) {
+        constructor(name:string) {
             this.m_Name = name;
+        }
+
+        public get name():string { 
+            return this.m_Name;
+        }
+
+        protected load(vertSource: string, fragSource: string):void {
             let vertexShader = this.loadShader(vertSource, gl.VERTEX_SHADER);
             let fragShader = this.loadShader(fragSource, gl.FRAGMENT_SHADER);
 
             this.createShaderProgram(vertexShader, fragShader);
             this.detectAttributes();
             this.detectUniforms();
-        }
-
-        public get name():string { 
-            return this.m_Name;
         }
 
         public use():void {
