@@ -24,17 +24,15 @@ export default class Transform {
 
     public setFromJson(json: any): void {
         if( json.position !== undefined) {
-            this.Position[0] = json.x;
-            this.Position[1] = json.y;
-            this.Position[2] = json.z;
+            vec3.set(this.Position, json.position.x, json.position.y, json.position.z);
         }
         if( json.rotation !== undefined) {
             this.Rotation = json.rotation;
         }
         if( json.scale !== undefined) {
-            this.Scale[0] = json.x;
-            this.Scale[1] = json.y;
-            this.Scale[2] = json.z;
+            this.Scale[0] = json.position.x;
+            this.Scale[1] = json.position.y;
+            this.Scale[2] = json.position.z;
         }
     }
 

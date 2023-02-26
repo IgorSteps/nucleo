@@ -1,3 +1,4 @@
+import { ComponentManager } from "../components/componentManager";
 import Shader from "../gl/shader";
 import Scene from "./scene";
 import SimObject from "./simObject";
@@ -45,7 +46,7 @@ export default class Level {
         }
 
         for(let o in levelData.objects) {
-            let obj = levelData.obejcts[o];
+            let obj = levelData.objects[o];
 
             this.loadSimObject(obj, this.m_Scene.root);
         }
@@ -90,8 +91,17 @@ export default class Level {
         
         if(dataSection.transform !== undefined) {
             simObject.Transform.setFromJson(dataSection.transform);
+            //console.log("SimObj Pos", simObject.Transform.Position)
         }
-        
+
+        if(dataSection.components !== undefined) {
+            for (let c in dataSection.components) {
+                let data = dataSection.components[c];
+                let component = ComponentManager.extractComponent(data);
+                console.log("Component ", component)
+                simObject.addComponent(component);
+            }
+        }
         
         if(dataSection.children !== undefined) {
             for(let o in dataSection.children) {

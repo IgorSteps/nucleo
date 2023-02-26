@@ -1,11 +1,15 @@
 import { mat4, vec3 } from 'gl-matrix';
+
 import { gl } from '../gl/gl';
 import {GLBuffer, AttributeInfo} from '../gl/glBuffer'
+
 import Shader from '../gl/shader';
 import Material from './material';
 import MaterialManager from './materialManager';
-import Texture from './texture';
-import TextureManager from './textureManager';
+
+
+
+
 export default class Sprite {
 
     private m_Name: string;

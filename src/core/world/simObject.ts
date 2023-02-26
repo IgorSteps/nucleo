@@ -1,6 +1,7 @@
 import { mat4 } from "gl-matrix";
 import { re } from "mathjs";
 import Component from "../components/component";
+import { IComponent } from "../components/IComponent";
 import Shader from "../gl/shader";
 import Transform from "../math/transform";
 import Scene from "./scene";
@@ -14,7 +15,7 @@ export default class SimObject {
     private m_LocalMatrix: mat4 = mat4.create();
     private m_WorldMatrix: mat4 = mat4.create();
 
-    private m_Components: Component[] = [];
+    private m_Components: IComponent[] = [];
 
     public Name: string;
     public Transform: Transform = new Transform();
@@ -72,7 +73,7 @@ export default class SimObject {
         return undefined;
     }
 
-    public addComponent(component: Component): void {
+    public addComponent(component: IComponent): void {
         this.m_Components.push(component);
         component.setOwner(this);
     }

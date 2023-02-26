@@ -1,13 +1,18 @@
 import Shader from "../gl/shader";
 import SimObject from "../world/simObject";
+import { IComponent } from "./IComponent";
+import { IComponentData } from "./IComponentData";
 
-export default abstract class Component {
+export default abstract class Component implements IComponent{
 
     protected m_Owner: SimObject;
+    protected m_Data: IComponentData;
 
-    public Name: string;
+    public name: string;
 
-    constructor(name: string) {
+    constructor(data: IComponentData) {
+        this.m_Data = data;
+        this.name = data.name;
 
     }
 

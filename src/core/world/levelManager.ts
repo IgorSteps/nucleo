@@ -4,7 +4,6 @@ import Shader from "../gl/shader";
 import IMessageHadnler from "../message/IMessageHandler";
 import Message from "../message/message";
 import Level from "./level";
-import { TestLevel } from "./testZone";
 
 export default class LevelManager implements IMessageHadnler {
 
@@ -88,8 +87,9 @@ export default class LevelManager implements IMessageHadnler {
     }
 
     public onMessage(message: Message): void{
-        if(message.Code.indexOf(MSG_ASSET_LOADER_ASSET_LOADED)) {
+        if(message.Code.indexOf(MSG_ASSET_LOADER_ASSET_LOADED) !== -1) {
             let asset = message.Context as JsonAsset;
+            console.log("Asset", asset)
             LevelManager.loadLevel(asset);
         }
     }
