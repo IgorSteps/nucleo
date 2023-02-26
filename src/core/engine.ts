@@ -9,6 +9,8 @@ import MaterialManager from "./graphics/materialManager";
 import Material from "./graphics/material";
 import Colour from "./graphics/colour";
 import LevelManager from "./world/levelManager";
+import { ComponentManager } from "./components/componentManager";
+import { BehaviourManager } from "./behaviours/behaviourManager";
 
 export default class Engine {
 
@@ -24,7 +26,9 @@ export default class Engine {
 
         // Init Asset manager
         AssetManager.init();
-
+        LevelManager.init();
+        ComponentManager.init();
+        BehaviourManager.init();
 
         gl.clearColor(0,0,0,1);
 
@@ -40,8 +44,7 @@ export default class Engine {
         MaterialManager.registerMaterial(new Material("crate", "../assets/textures/crate.jpg", new Colour(255, 128, 0, 255)));
 
         // Load test level
-        let levelId = LevelManager.createTestLvl();
-        LevelManager.changeLevel(levelId);
+        LevelManager.changeLevel(0);
 
 
         this.resize()

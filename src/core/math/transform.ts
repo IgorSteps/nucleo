@@ -22,4 +22,18 @@ export default class Transform {
         return model;
     }
 
+    public setFromJson(json: any): void {
+        if( json.position !== undefined) {
+            vec3.set(this.Position, json.position.x, json.position.y, json.position.z);
+        }
+        if( json.rotation !== undefined) {
+            this.Rotation = json.rotation;
+        }
+        if( json.scale !== undefined) {
+            this.Scale[0] = json.position.x;
+            this.Scale[1] = json.position.y;
+            this.Scale[2] = json.position.z;
+        }
+    }
+
 }
