@@ -89,7 +89,6 @@ export default class LevelManager implements IMessageHadnler {
     public onMessage(message: Message): void{
         if(message.Code.indexOf(MSG_ASSET_LOADER_ASSET_LOADED) !== -1) {
             let asset = message.Context as JsonAsset;
-            console.log("Asset", asset)
             LevelManager.loadLevel(asset);
         }
     }

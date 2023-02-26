@@ -1,5 +1,6 @@
 import { mat4 } from "gl-matrix";
 import { re } from "mathjs";
+import { IBehaviour } from "../behaviours/IBehaviour";
 import Component from "../components/component";
 import { IComponent } from "../components/IComponent";
 import Shader from "../gl/shader";
@@ -16,6 +17,7 @@ export default class SimObject {
     private m_WorldMatrix: mat4 = mat4.create();
 
     private m_Components: IComponent[] = [];
+    private m_Behaviours: IBehaviour[] = [];
 
     public Name: string;
     public Transform: Transform = new Transform();
@@ -78,6 +80,11 @@ export default class SimObject {
         component.setOwner(this);
     }
 
+    public addBehaviour(behaviour: IBehaviour): void {
+        this.m_Behaviours.push(behaviour);
+        behaviour.setOwner(this);
+    }
+
     public load(): void {
         this.m_IsLoaded = true;
 
@@ -97,6 +104,10 @@ export default class SimObject {
 
         for (let c of this.m_Components) {
             c.update(dt);
+        }
+
+        for (let b of this.m_Behaviours) {
+            b.update(dt);
         }
 
         for(let c of this.m_Children) {

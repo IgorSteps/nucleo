@@ -13,13 +13,11 @@ export class ComponentManager {
     }
 
     public static registerBuilder(builder: IComponentBuilder): void {
-        console.log("registerBuilder called ")
         ComponentManager.m_RegisteredBuilders[builder.type] = builder;
     }
 
     public static extractComponent(json: any): IComponent {
         if(json.type !== undefined) {
-            console.log("Builders: ", ComponentManager.m_RegisteredBuilders[String(json.type)]);
             if(ComponentManager.m_RegisteredBuilders[String(json.type)] !== undefined ) {
                 return ComponentManager.m_RegisteredBuilders[String(json.type)].buildFromJson(json);
             }

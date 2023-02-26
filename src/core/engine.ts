@@ -10,6 +10,7 @@ import Material from "./graphics/material";
 import Colour from "./graphics/colour";
 import LevelManager from "./world/levelManager";
 import { ComponentManager } from "./components/componentManager";
+import { BehaviourManager } from "./behaviours/behaviourManager";
 
 export default class Engine {
 
@@ -27,7 +28,7 @@ export default class Engine {
         AssetManager.init();
         LevelManager.init();
         ComponentManager.init();
-
+        BehaviourManager.init();
 
         gl.clearColor(0,0,0,1);
 

@@ -35,14 +35,6 @@ export default class AssetManager {
     public static loadAsset(name: string): void {
         let extension = name.split(".").pop().toLowerCase();
         
-        // AssetManager.m_Loaders.forEach((l: IAssetLoader) => {
-        //     if(l.supportedExts.indexOf(extension) !== -1)
-        //     {
-        //         l.loadAsset(name);
-        //         return;
-        //     }
-        // })
-
         for (let l of AssetManager.m_Loaders) {
             if(l.supportedExts.indexOf(extension) !== -1) {
                 l.loadAsset(name);

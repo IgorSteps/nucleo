@@ -28,6 +28,13 @@
 							"type": "sprite",
 							"materialName": "crate"
 						}
+					],
+					"behaviours": [
+						{
+							"name": "rotateX",
+							"type": "rotation",
+							"rotation":  "0.01"
+						}
 					]
 				}
 			],
@@ -36,6 +43,13 @@
 					"name": "test",
 					"type": "sprite",
 					"materialName": "crate"
+				}
+			],
+			"behaviours": [
+				{
+					"name": "rotateX",
+					"type": "rotation",
+					"rotation":  "0.01"
 				}
 			]
 		}
