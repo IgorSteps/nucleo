@@ -30,9 +30,7 @@ export default class Transform {
             this.Rotation = json.rotation;
         }
         if( json.scale !== undefined) {
-            this.Scale[0] = json.position.x;
-            this.Scale[1] = json.position.y;
-            this.Scale[2] = json.position.z;
+            vec3.set(this.Scale, json.scale.x, json.scale.y, json.scale.z);
         }
     }
 

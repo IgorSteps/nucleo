@@ -59,7 +59,7 @@ export default class MessageBus {
             let node = MessageBus.m_MessageQueue.pop();
             node.Handler.onMessage(node.Message);
         }
-
+        console.log("Second")
     }
 
 }

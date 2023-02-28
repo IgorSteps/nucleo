@@ -27,13 +27,12 @@
 
         /**
          * Creates new gl buffer
-         * @param elementSize - Size of each element in this buffer
          * @param dataType - Data type of this buffer, DEFAULT = FLOAT
          * @param targetBufferType Target buffer type of this buffer , DEFAULT = gl.ARRAY_BUFFER
          * @param mode Drawing mode of this buffer, DEFAULT = gl.TRIANGELS
          */
-        constructor(elementSize: number, dataType: number = gl.FLOAT, targetBufferType: number = gl.ARRAY_BUFFER, mode: number =  gl.TRIANGLES) {
-            this.m_ElementSize = elementSize;
+        constructor( dataType: number = gl.FLOAT, targetBufferType: number = gl.ARRAY_BUFFER, mode: number =  gl.TRIANGLES) {
+            this.m_ElementSize = 0;
             this.m_DataType = dataType;
             this.m_TargetBufferType = targetBufferType;
             this.m_Mode = mode;
@@ -57,7 +56,6 @@
                     throw new Error(`Unrecognised data type ${dataType.toString()}`)
             }
 
-            this.m_Stride = this.m_ElementSize * this.m_TypeSize;
             this.m_GLBuffer = gl.createBuffer();
             this.m_VAO = gl.createVertexArray();
         }
@@ -93,7 +91,10 @@
 
         public addAttributeLocation(info: AttributeInfo): void {
             this.m_HasAttributeLocation = true;
-            this.m_Attributes.push(info)
+            info.offset = this.m_ElementSize;
+            this.m_Attributes.push(info);
+            this.m_ElementSize += info.size;
+            this.m_Stride = this.m_ElementSize * this.m_TypeSize;
         }
 
         /**
@@ -104,6 +105,22 @@
           data.forEach( (d) => {
             this.m_Data.push(d);
           })
+        }
+
+        /**
+         * Clears this buffer data
+         */
+        public clearData(): void {
+            this.m_Data.length = 0;
+        }
+
+        /**
+         * Replaces data in this buffer.
+         * @param data - vertex data
+         */
+        public setData(data: number[]): void {
+            this.clearData();
+            this.pushBackData(data);
         }
 
         /**

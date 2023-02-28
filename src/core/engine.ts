@@ -17,6 +17,8 @@ export default class Engine {
     private m_Canvas: HTMLCanvasElement;
     private m_BasicShader: Shader;
     private m_Projection: mat4;
+    private m_PreviousTime: number = 0;
+
 
     public constructor() {}
 
@@ -30,7 +32,10 @@ export default class Engine {
         ComponentManager.init();
         BehaviourManager.init();
 
-        gl.clearColor(0,0,0,1);
+        gl.clearColor(0,0,0.8,1);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
 
         // Load Shader
         this.m_BasicShader = new BasicShader();
@@ -41,7 +46,8 @@ export default class Engine {
         this.m_Projection = mat4.ortho(this.m_Projection, 0.0, this.m_Canvas.width, this.m_Canvas.height, 0.0, -100.0, 100.0);
         
         // Load Materials
-        MaterialManager.registerMaterial(new Material("crate", "../assets/textures/crate.jpg", new Colour(255, 128, 0, 255)));
+        MaterialManager.registerMaterial(new Material("crate", "../assets/textures/crate.jpg", new Colour(255, 255, 255, 255)));
+        MaterialManager.registerMaterial(new Material("duck", "../assets/textures/duck.png", new Colour(255, 255, 255, 255)));
 
         // Load test level
         LevelManager.changeLevel(0);
@@ -65,13 +71,19 @@ export default class Engine {
 
 
     private loop(): void {
-        MessageBus.update(0);
-        LevelManager.update(0);
+        this.update()
+        this.render()
+    }
 
+    private update(): void {
+        let dt = performance.now() - this.m_PreviousTime;
+        MessageBus.update(dt);
+        LevelManager.update(dt);
+        this.m_PreviousTime = performance.now();
+    }
+
+    private render(): void {
         gl.clear(gl.COLOR_BUFFER_BIT);
-
-        
-        // set uniforms
         let projPos = this.m_BasicShader.getUniformLocation("u_projection");
         gl.uniformMatrix4fv(projPos, false, new Float32Array(this.m_Projection))
         LevelManager.render(this.m_BasicShader);
