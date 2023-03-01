@@ -8,7 +8,6 @@ import Level from "./level";
 export default class LevelManager implements IMessageHadnler {
 
     private static m_GlobalLevelId: number = -1;
-    //private static m_Levels: {[id: number]: Level} = {}; 
     private static m_RegisteredLevels: {[id: number]: string} = {};
     private static m_ActiveLevel: Level;
     private static m_Instance: LevelManager;
@@ -21,7 +20,6 @@ export default class LevelManager implements IMessageHadnler {
 
         // TODO: temporary
         LevelManager.m_RegisteredLevels[0] = "../../assets/levels/testLevel.json"
-        // src/assets/levels/testLevel.json
     }
 
   

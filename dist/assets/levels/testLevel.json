@@ -4,6 +4,32 @@
 	"id": 0,
 	"objects": [
 		{
+			"name": "duck",
+			"transform": {
+				"position": {
+					"x": 100,
+					"y": 100,
+					"z": 1
+				},
+				"scale": {
+					"x": 8,
+					"y": 8,
+					"z": 8
+				}
+			},
+			"components": [
+				{
+					"name": "duckAnimatedSpriteTest",
+					"type": "animatedSprite",
+					"materialName": "duck",
+					"FrameWidth": 17,
+					"FrameHeight": 12,
+					"FrameCount": 3,
+					"FrameSequence": [0,1,2,1]
+				}
+			]
+		},
+		{
 			"name": "parentObject",
 			"transform": {
 				"position": {
@@ -28,6 +54,13 @@
 							"type": "sprite",
 							"materialName": "crate"
 						}
+					],
+					"behaviours": [
+						{
+							"name": "rotateX",
+							"type": "rotation",
+							"rotation":  "0.01"
+						}
 					]
 				}
 			],
@@ -38,7 +71,7 @@
 					"materialName": "crate"
 				}
 			],
-			"behaviour": [
+			"behaviours": [
 				{
 					"name": "rotateX",
 					"type": "rotation",

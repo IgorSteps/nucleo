@@ -77,6 +77,7 @@ export default class Texture implements IMessageHadnler{
     }
     
     public onMessage(message: Message): void {
+        
         if(message.Code === MSG_ASSET_LOADER_ASSET_LOADED + this.m_Name) {
             console.debug(this.m_Name + " loaded:", message.Context)
             this.loadTextureFromAsset(message.Context as ImageAsset);
@@ -92,6 +93,7 @@ export default class Texture implements IMessageHadnler{
 
         // Set the parameters so we don't need mips and so we're not filtering
         // and we don't repeat at the edges
+        // @TODO: Does this need to be a config option?
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);

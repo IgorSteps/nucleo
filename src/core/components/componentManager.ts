@@ -1,3 +1,4 @@
+import { AnimatedSpriteComponentBuilder } from "./animatedSpriteComponent";
 import { IComponent } from "./IComponent";
 import { IComponentBuilder } from "./IComponentBuilder";
 import { SpriteComponentBuilder } from "./spriteComponent";
@@ -10,6 +11,7 @@ export class ComponentManager {
 
     public static init() {
         ComponentManager.registerBuilder(new SpriteComponentBuilder());
+        ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
     }
 
     public static registerBuilder(builder: IComponentBuilder): void {

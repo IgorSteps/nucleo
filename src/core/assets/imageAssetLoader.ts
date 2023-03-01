@@ -1,4 +1,5 @@
-import AssetManager from "./assetManager";
+import Message from "../message/message";
+import AssetManager, { MSG_ASSET_LOADER_ASSET_LOADED } from "./assetManager";
 import { IAsset } from "./IAsset";
 import IAssetLoader from "./IAssetLoader";
 
