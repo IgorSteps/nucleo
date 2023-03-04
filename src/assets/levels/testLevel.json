@@ -26,6 +26,14 @@
 					"FrameHeight": 12,
 					"FrameCount": 3,
 					"FrameSequence": [0,1,2,1]
+				},
+				{
+					"name" : "duckCollision",
+					"type": "collision",
+					"shape": {
+						"type": "circle",
+						"radius": 68
+					}
 				}
 			],
 			"behaviours": [
