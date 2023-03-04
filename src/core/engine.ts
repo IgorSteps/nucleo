@@ -14,6 +14,7 @@ import { BehaviourManager } from "./behaviours/behaviourManager";
 import InputManager, { MouseContext } from "./input/inputManager";
 import IMessageHadnler from "./message/IMessageHandler";
 import Message from "./message/message";
+import AudioManager from "./audio/audioManager";
 
 export default class Engine implements IMessageHadnler{
 
@@ -42,7 +43,6 @@ export default class Engine implements IMessageHadnler{
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-
         // Load Shader
         this.m_BasicShader = new BasicShader();
         this.m_BasicShader.use();
@@ -54,6 +54,8 @@ export default class Engine implements IMessageHadnler{
         // Load Materials
         MaterialManager.registerMaterial(new Material("crate", "../assets/textures/crate.jpg", new Colour(255, 255, 255, 255)));
         MaterialManager.registerMaterial(new Material("duck", "../assets/textures/duck.png", new Colour(255, 255, 255, 255)));
+
+        AudioManager.loadSoundFile("flap", "../assets/audio/flap.mp3", false);
 
         // Load test level
         LevelManager.changeLevel(0);
@@ -101,6 +103,8 @@ export default class Engine implements IMessageHadnler{
         if(msg.Code === "MOUSE_UP") {
             let ctx = msg.Context as MouseContext;
             document.title = `Pos: ${ctx.position[0]}, ${ctx.position[1]}`;
+
+            AudioManager.playSound("flap");
         }
     }
 
