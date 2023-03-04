@@ -29,7 +29,7 @@ export default class AssetManager {
 
     public static onAssetLoaded(asset: IAsset): void {
         AssetManager.m_LoadedAssets[asset.Name] = asset;
-        Message.send(MSG_ASSET_LOADER_ASSET_LOADED + asset.Name, this, asset)
+        Message.sendPriority(MSG_ASSET_LOADER_ASSET_LOADED + asset.Name, this, asset)
     }
 
     public static loadAsset(name: string): void {

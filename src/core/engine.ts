@@ -11,6 +11,7 @@ import Colour from "./graphics/colour";
 import LevelManager from "./world/levelManager";
 import { ComponentManager } from "./components/componentManager";
 import { BehaviourManager } from "./behaviours/behaviourManager";
+import InputManager from "./input/inputManager";
 
 export default class Engine {
 
@@ -28,6 +29,7 @@ export default class Engine {
 
         // Init Asset manager
         AssetManager.init();
+        InputManager.init();
         LevelManager.init();
         ComponentManager.init();
         BehaviourManager.init();
