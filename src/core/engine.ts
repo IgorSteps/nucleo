@@ -11,8 +11,11 @@ import Colour from "./graphics/colour";
 import LevelManager from "./world/levelManager";
 import { ComponentManager } from "./components/componentManager";
 import { BehaviourManager } from "./behaviours/behaviourManager";
+import InputManager, { MouseContext } from "./input/inputManager";
+import IMessageHadnler from "./message/IMessageHandler";
+import Message from "./message/message";
 
-export default class Engine {
+export default class Engine implements IMessageHadnler{
 
     private m_Canvas: HTMLCanvasElement;
     private m_BasicShader: Shader;
@@ -28,9 +31,12 @@ export default class Engine {
 
         // Init Asset manager
         AssetManager.init();
+        InputManager.init();
         LevelManager.init();
         ComponentManager.init();
         BehaviourManager.init();
+
+        Message.subscribe("MOUSE_UP", this);
 
         gl.clearColor(0,0,0.8,1);
         gl.enable(gl.BLEND);
@@ -89,6 +95,13 @@ export default class Engine {
         LevelManager.render(this.m_BasicShader);
 
         requestAnimationFrame( this.loop.bind( this ) );
+    }
+
+    public onMessage(msg: Message): void {
+        if(msg.Code === "MOUSE_UP") {
+            let ctx = msg.Context as MouseContext;
+            document.title = `Pos: ${ctx.position[0]}, ${ctx.position[1]}`;
+        }
     }
 
 }
