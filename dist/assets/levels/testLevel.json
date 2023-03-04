@@ -75,7 +75,11 @@
 				{
 					"name": "test",
 					"type": "sprite",
-					"materialName": "crate"
+					"materialName": "crate",
+					"origin": {
+						"x": 0.5,
+						"y": 0.5
+					}
 				}
 			],
 			"behaviours": [

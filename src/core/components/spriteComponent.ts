@@ -1,9 +1,7 @@
-/// <reference path="componentmanager.ts" />
-
+import { vec3 } from "gl-matrix";
 import Shader from "../gl/shader";
 import Sprite from "../graphics/sprite";
 import Component from "./component";
-import { ComponentManager } from "./componentManager";
 import { IComponent } from "./IComponent";
 import { IComponentBuilder } from "./IComponentBuilder";
 import { IComponentData } from "./IComponentData";
@@ -11,6 +9,7 @@ import { IComponentData } from "./IComponentData";
 export class SpriteComponentData implements IComponentData{
     public name: string;
     public materialName: string;
+    public origin: vec3 = vec3.create();
 
     public setFromJson(json: any): void {
         if(json.name !== undefined) {
@@ -19,6 +18,10 @@ export class SpriteComponentData implements IComponentData{
 
         if(json.name !== undefined) {
             this.materialName = String(json.materialName);
+        }
+
+        if(json.origin !== undefined) {
+            vec3.set(this.origin, json.origin.x, json.origin.y, json.origin.z);
         }
     }
 }
@@ -43,6 +46,9 @@ export default class SpriteComponent extends Component {
         super(data);
 
         this.m_Sprite = new Sprite(this.name, data.materialName);
+        if(!vec3.equals(vec3.create(), data.origin)) {
+            vec3.set(this.m_Sprite.origin, data.origin[0], data.origin[1], data.origin[2]);
+        }
     }
 
     public load(): void {
