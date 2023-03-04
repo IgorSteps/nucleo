@@ -1,4 +1,4 @@
-# Nucleo Game Engine
+# 2D Game Engine
 
 Built with TS and WebGL2.
 
