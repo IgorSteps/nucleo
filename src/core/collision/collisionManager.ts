@@ -1,5 +1,4 @@
 import CollisionComponent from "../components/collisionComponent";
-import { ComponentManager } from "../components/componentManager";
 
 export class CollisionData {
     public a: CollisionComponent;

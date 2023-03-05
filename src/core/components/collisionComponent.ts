@@ -67,7 +67,9 @@ export default class CollisionComponent extends Component {
 
     public load(): void {
         super.load();
+        // @TODO: problem with getting world position for nested objects
         vec2.set(this.m_Shape.position, this.m_Owner.Transform.Position[0], this.m_Owner.Transform.Position[1]);
+        // @TODO: hacky way to fix problem with collisions and origins - remove
         vec2.add(this.m_Shape.position, this.m_Shape.position, this.m_Shape.offset);
 
         CollisionManager.registerCollisionComponent(this);
@@ -76,6 +78,7 @@ export default class CollisionComponent extends Component {
     public update(dt: number): void {
         // @TODO: problem with getting world position for nested objects
         vec2.set(this.m_Shape.position, this.m_Owner.Transform.Position[0], this.m_Owner.Transform.Position[1]);
+        // @TODO: hacky way to fix problem with collisions and origins - remove
         vec2.add(this.m_Shape.position, this.m_Shape.position, this.m_Shape.offset);
 
         super.update(dt);
