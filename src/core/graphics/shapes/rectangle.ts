@@ -4,6 +4,7 @@ import IShape from "./IShape";
 
 export default class Rectangle implements IShape{
     public position: vec2 = vec2.create();
+    public offset: vec2 = vec2.create();
 
     public width: number;
     public height: number;
@@ -11,6 +12,10 @@ export default class Rectangle implements IShape{
     public setFromJson(json: any): void {
         if(json.position !== undefined) {
             vec2.set(this.position, json.position.x, json.position.y);
+        }
+
+        if(json.offset !== undefined) {
+            vec2.set(this.offset, json.offset.x, json.offset.y);
         }
 
         if(json.width === undefined) {

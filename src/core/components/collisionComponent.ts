@@ -1,4 +1,5 @@
-import { vec3 } from "gl-matrix";
+import { vec2, vec3 } from "gl-matrix";
+import { CollisionManager } from "../collision/collisionManager";
 import Shader from "../gl/shader";
 import Circle from "../graphics/shapes/circle";
 import IShape from "../graphics/shapes/IShape";
@@ -63,8 +64,42 @@ export default class CollisionComponent extends Component {
         super(data);
         this.m_Shape = data.shape;
     }
+
+    public load(): void {
+        super.load();
+        vec2.set(this.m_Shape.position, this.m_Owner.Transform.Position[0], this.m_Owner.Transform.Position[1]);
+        vec2.add(this.m_Shape.position, this.m_Shape.position, this.m_Shape.offset);
+
+        CollisionManager.registerCollisionComponent(this);
+    }
+
+    public update(dt: number): void {
+        // @TODO: problem with getting world position for nested objects
+        vec2.set(this.m_Shape.position, this.m_Owner.Transform.Position[0], this.m_Owner.Transform.Position[1]);
+        vec2.add(this.m_Shape.position, this.m_Shape.position, this.m_Shape.offset);
+
+        super.update(dt);
+    }
+
     public get shape(): IShape {
         return this.m_Shape;
     }
+
+    public onCollisionEntry(other: CollisionComponent) {
+        console.log("onCollisionEntry", this, other)
+
+    }
+
+    public onCollisionUpdate(other: CollisionComponent) {
+        console.log("onCollisionUpdate", this, other)
+
+    }
+
+    public onCollisionExit(other: CollisionComponent) {
+        console.log("onCollisionExit", this, other)
+
+    }
+
+   
 
 }

@@ -4,6 +4,7 @@ import Rectangle from "./rectangle";
 
 export default class Circle implements IShape {
     public position: vec2 = vec2.create();
+    public offset: vec2 = vec2.create();
     public radius: number;
 
 
@@ -12,10 +13,14 @@ export default class Circle implements IShape {
             vec2.set(this.position, json.position.x, json.position.y);
         }
 
+        if(json.offset !== undefined) {
+            vec2.set(this.offset, json.offset.x, json.offset.y);
+        }
+
         if(json.radius === undefined) {
             throw new Error("Radius is missing width")
         }
-        this.radius = Number(json.width)
+        this.radius = Number(json.radius)
 
        
     }
