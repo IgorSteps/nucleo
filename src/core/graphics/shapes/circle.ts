@@ -4,17 +4,21 @@ import Rectangle from "./rectangle";
 
 export default class Circle implements IShape {
     public position: vec2 = vec2.create();
-    public offset: vec2 = vec2.create();
+    public origin: vec2 = vec2.create();
     public radius: number;
 
+
+    public get offset(): vec2 {
+        return vec2.fromValues( this.radius + ( this.radius * this.origin[0] ), this.radius + ( this.radius * this.origin[1] ) );
+    }
 
     public setFromJson(json: any): void {
         if(json.position !== undefined) {
             vec2.set(this.position, json.position.x, json.position.y);
         }
 
-        if(json.offset !== undefined) {
-            vec2.set(this.offset, json.offset.x, json.offset.y);
+        if(json.origin !== undefined) {
+            vec2.set(this.origin, json.origin.x, json.origin.y);
         }
 
         if(json.radius === undefined) {
@@ -35,10 +39,9 @@ export default class Circle implements IShape {
         }
 
         if ( other instanceof Rectangle ) {
-            if ( this.pointInShape(other.position ) ||
-                this.pointInShape(vec2.set(vec2.create(), other.position[0] + other.width, other.position[1] ) ) ||
-                this.pointInShape(vec2.set(vec2.create(),other.position[0] + other.width, other.position[1] + other.height ) ) ||
-                this.pointInShape(vec2.set(vec2.create(),other.position[0], other.position[1] + other.height ) ) ) {
+            let deltaX = this.position[0] - Math.max( other.position[0], Math.min( this.position[0], other.position[0] + other.width ) );
+            let deltaY = this.position[1] - Math.max( other.position[1], Math.min( this.position[1], other.position[1] + other.height ) );
+            if ((deltaX * deltaX + deltaY * deltaY) < (this.radius * this.radius)) {
                 return true;
             }
         }
