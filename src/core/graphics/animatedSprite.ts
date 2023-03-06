@@ -1,8 +1,9 @@
 import { vec2 } from "gl-matrix";
-import { MSG_ASSET_LOADER_ASSET_LOADED } from "../assets/assetManager";
+import AssetManager, { MSG_ASSET_LOADER_ASSET_LOADED } from "../assets/assetManager";
 import { ImageAsset } from "../assets/imageAssetLoader";
 import IMessageHandler from "../message/IMessageHandler";
 import Message from "../message/message";
+import MaterialManager from "./materialManager";
 import Sprite from "./sprite";
 import Vertex from "./vertex";
 
@@ -64,12 +65,16 @@ export default class AnimatedSprite extends Sprite implements IMessageHandler{
 
     public load(): void {
        super.load();
+       if(!this.m_AssetLoaded) {
+        this.setupFromMaterial();
+       }
     
     }
 
 
     public update(dt: number): void {
         if(!this.m_AssetLoaded){
+            this.setupFromMaterial();
             return;
         }
         this.m_CurrentTime += dt;
@@ -137,4 +142,20 @@ export default class AnimatedSprite extends Sprite implements IMessageHandler{
        }
     
     }
+
+
+    private setupFromMaterial(): void {
+        if(!this.m_AssetLoaded) {
+            let material = MaterialManager.getMaterial(this.m_MaterialName);
+            if(material.diffuseTexture.isLoaded) {
+                if(AssetManager.isAssetLoaded(material.diffuseTexName)) {
+                    this.m_AssetHeight = material.diffuseTexture.height;
+                    this.m_AssetWidth = material.diffuseTexture.width;
+                    this.m_AssetLoaded = true;
+                    this.calculateUVs();
+                }
+            }
+        }
+    }
+
 }

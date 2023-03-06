@@ -90,9 +90,3 @@ export default class AnimatedSpriteComponent extends Component {
         super.render(shader);
     }
 }
-
-// TODO: Why isn't this method call executed? 
-// Had to make an ComponentManager.init() that's called in the engine.ts
-// ComponentManager.registerBuilder(new SpriteComponentBuilder());
-
-
