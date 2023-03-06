@@ -1,4 +1,5 @@
 import { AnimatedSpriteComponentBuilder } from "./animatedSpriteComponent";
+import { CollisionComponentBuilder } from "./collisionComponent";
 import { IComponent } from "./IComponent";
 import { IComponentBuilder } from "./IComponentBuilder";
 import { SpriteComponentBuilder } from "./spriteComponent";
@@ -12,6 +13,7 @@ export class ComponentManager {
     public static init() {
         ComponentManager.registerBuilder(new SpriteComponentBuilder());
         ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
+        ComponentManager.registerBuilder(new CollisionComponentBuilder());
     }
 
     public static registerBuilder(builder: IComponentBuilder): void {
@@ -23,8 +25,8 @@ export class ComponentManager {
             if(ComponentManager.m_RegisteredBuilders[String(json.type)] !== undefined ) {
                 return ComponentManager.m_RegisteredBuilders[String(json.type)].buildFromJson(json);
             }
-
-            throw new Error("Component manager is missing type or builder is not registered for this type");
         }
+        
+        throw new Error("Component manager is missing type or builder is not registered for this type");
     }
 }

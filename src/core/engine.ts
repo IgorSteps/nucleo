@@ -15,6 +15,7 @@ import InputManager, { MouseContext } from "./input/inputManager";
 import IMessageHadnler from "./message/IMessageHandler";
 import Message from "./message/message";
 import AudioManager from "./audio/audioManager";
+import { CollisionManager } from "./collision/collisionManager";
 
 export default class Engine implements IMessageHadnler{
 
@@ -87,6 +88,7 @@ export default class Engine implements IMessageHadnler{
         let dt = performance.now() - this.m_PreviousTime;
         MessageBus.update(dt);
         LevelManager.update(dt);
+        CollisionManager.update(dt);
         this.m_PreviousTime = performance.now();
     }
 

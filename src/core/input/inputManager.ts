@@ -53,16 +53,18 @@ export default class InputManager {
 
     private static onKeyDown(event: KeyboardEvent): boolean {
         InputManager.m_Keys[event.key.charCodeAt(0)] = true;
-        event.preventDefault();
-        event.stopPropagation()
-        return false;
+        return true;
+        // event.preventDefault();
+        // event.stopPropagation()
+        // return false;
     }
 
     private static onKeyUp(event: KeyboardEvent): boolean {
         InputManager.m_Keys[event.key.charCodeAt(0)] = false;
-        event.preventDefault();
-        event.stopPropagation()
-        return false;
+        return true;
+        // event.preventDefault();
+        // event.stopPropagation()
+        // return false;
     }
 
     private static onMouseMove(event: MouseEvent):void {
