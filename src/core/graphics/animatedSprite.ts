@@ -5,7 +5,6 @@ import IMessageHandler from "../message/IMessageHandler";
 import Message from "../message/message";
 import MaterialManager from "./materialManager";
 import Sprite from "./sprite";
-import Vertex from "./vertex";
 
 class UVInfo {
     public Min: vec2;
@@ -33,8 +32,9 @@ export default class AnimatedSprite extends Sprite implements IMessageHandler{
 
     private m_AssetWidth: number = 2;
     private m_AssetHeight: number = 2;
-
     private m_AssetLoaded: boolean = false;
+
+    private m_IsPlaying: boolean = true;
    
     constructor(name: string, materialName: string, width: number = 100, height: number = 100,
         frameWidth: number = 10, frameHeight: number = 10,  frameCount: number = 1, frameSequance: number[]=[]) {
@@ -48,7 +48,30 @@ export default class AnimatedSprite extends Sprite implements IMessageHandler{
         Message.subscribe(MSG_ASSET_LOADER_ASSET_LOADED + this.m_Material.diffuseTexName, this);
     }
 
+    public destroy(): void {
+        super.destroy();
+    }
+ 
+    public get isPlaying() : boolean {
+        return this.m_IsPlaying
+    }
 
+    public play(): void {
+        this.m_IsPlaying = true;
+    }
+
+    public stop(): void {
+        this.m_IsPlaying = false;
+    }
+
+    public setFrame(frameNum: number): void {
+        if(frameNum >= this.m_FrameCount) {
+            throw new Error("Frame is out of range: " + frameNum + ", frame count: " + this.m_FrameCount)
+        }
+
+        this.m_CurrentFrame = frameNum;
+    }
+    
     public onMessage(message: Message): void {
          if(message.Code === MSG_ASSET_LOADER_ASSET_LOADED + this.m_Material.diffuseTexName) {
             this.m_AssetLoaded = true;
@@ -59,10 +82,6 @@ export default class AnimatedSprite extends Sprite implements IMessageHandler{
         }
     }
 
-    public destroy(): void {
-        super.destroy();
-    }
-
     public load(): void {
        super.load();
        if(!this.m_AssetLoaded) {
@@ -71,12 +90,16 @@ export default class AnimatedSprite extends Sprite implements IMessageHandler{
     
     }
 
-
     public update(dt: number): void {
         if(!this.m_AssetLoaded){
             this.setupFromMaterial();
             return;
         }
+
+        if(!this.m_IsPlaying) {
+            return
+        }
+
         this.m_CurrentTime += dt;
         if(this.m_CurrentTime > this.m_FrameTime) {
             this.m_CurrentFrame++;
@@ -143,7 +166,6 @@ export default class AnimatedSprite extends Sprite implements IMessageHandler{
     
     }
 
-
     private setupFromMaterial(): void {
         if(!this.m_AssetLoaded) {
             let material = MaterialManager.getMaterial(this.m_MaterialName);
@@ -157,5 +179,4 @@ export default class AnimatedSprite extends Sprite implements IMessageHandler{
             }
         }
     }
-
 }

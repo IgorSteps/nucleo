@@ -15,7 +15,7 @@ export abstract class Behaviour implements IBehaviour {
     public setOwner(owner: SimObject): void {
         this.m_Owner = owner;
     }
-    
+    public updateReady(): void {}
     public update(dt: number): void {}
     public apply(userData: any): void {}
 

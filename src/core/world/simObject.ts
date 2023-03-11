@@ -59,6 +59,39 @@ export default class SimObject {
         }
     }
 
+    public getComponentByName(name: string): IComponent {
+        for(let c of this.m_Components) {
+            if(c.name === name) {
+                return c;
+            }
+        }
+
+        for(let child of this.m_Children) {
+            let component = child.getComponentByName(name);
+            if( component !== undefined) {
+                return component;
+            }
+        }
+
+        return undefined;
+    }
+
+    public getBehaviourByName(name: string): IBehaviour {
+        for(let b of this.m_Behaviours) {
+            if(b.name === name) {
+                return b;
+            }
+        }
+
+        for(let child of this.m_Children) {
+            let behaviour = child.getBehaviourByName(name);
+            if( behaviour !== undefined) {
+                return behaviour;
+            }
+        }
+
+        return undefined;
+    }
 
     public getObjectByName(name: string): SimObject {
         if(this.Name === name){
@@ -96,6 +129,21 @@ export default class SimObject {
             c.load()
         }
     }
+
+    public updateReady(): void {
+        for (let c of this.m_Components) {
+            c.updateReady();
+        }
+
+        for (let b of this.m_Behaviours) {
+            b.updateReady();
+        }
+
+        for(let c of this.m_Children) {
+            c.updateReady()
+        }
+    }
+
 
     public update(dt: number): void {
 
