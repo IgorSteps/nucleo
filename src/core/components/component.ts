@@ -24,9 +24,9 @@ export default abstract class Component implements IComponent{
         this.m_Owner = owner;
     }
 
-    public load(): void {
-        
-    }
+    public load(): void {}
+
+    public updateReady(): void {}
     public update(dt: number): void {}
     public render(shader: Shader): void {}
 

@@ -12,9 +12,9 @@
 					"z": 1
 				},
 				"scale": {
-					"x": 8,
-					"y": 8,
-					"z": 8
+					"x": 2,
+					"y": 2,
+					"z": 2
 				}
 			},
 			"components": [
@@ -62,12 +62,7 @@
 				{
 					"name": "test",
 					"type": "sprite",
-					"materialName": "crate",
-					"origin": {
-						"x": 0.5,
-						"y": 0.5,
-						"z": 0
-					}
+					"materialName": "grass"
 				},
 				{
 					"name": "testCrateCollision",
