@@ -1,5 +1,3 @@
-import { ComponentManager } from './core/components/componentManager';
-import { SpriteComponentBuilder } from './core/components/spriteComponent';
 import Engine from './core/engine'
 import "./index.css"
 
