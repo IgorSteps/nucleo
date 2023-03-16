@@ -1,4 +1,5 @@
 import CollisionComponent from "../components/collisionComponent";
+import Message from "../message/message";
 
 export class CollisionData {
     public a: CollisionComponent;
@@ -70,6 +71,8 @@ export class CollisionManager {
                         let collision = new CollisionData(CollisionManager.m_TotalTime, component, other);
                         component.onCollisionEntry(other);
                         other.onCollisionEntry(component);
+                        Message.sendPriority("COLLISION_ENTRY:"+component.name, this, collision)
+                        Message.sendPriority("COLLISION_ENTRY:"+other.name, this, collision)
                         this.m_CollisionData.push(collision); 
                     }
                 }
@@ -80,23 +83,23 @@ export class CollisionManager {
         let removeData: CollisionData[] = [];
         for(let d=0; d<CollisionManager.m_CollisionData.length; ++d) {
             let data = CollisionManager.m_CollisionData[d];
-            if(data.time != CollisionManager.m_TotalTime) {
+            if(data.time !== CollisionManager.m_TotalTime) {
                 // old collision data
                 removeData.push(data);
-                data.a.onCollisionExit(data.b);
-                data.b.onCollisionExit(data.a);
+               
             }
         }
 
         while(removeData.length !== 0) {
+            let data = removeData.shift();
             let idx = CollisionManager.m_CollisionData.indexOf(removeData[0]); 
             CollisionManager.m_CollisionData.splice(idx, 1);
-            removeData.shift();
-        }
 
-        // @TODO remove
-        document.title = CollisionManager.m_CollisionData.length.toString();
+            data.a.onCollisionExit(data.b);
+            data.b.onCollisionExit(data.a);
+
+            Message.sendPriority("COLLISION_EXIT:"+data.a.name, this, data)
+            Message.sendPriority("COLLISION_EXIT:"+data.b.name, this, data)
+        }  
     }
-
-
 }

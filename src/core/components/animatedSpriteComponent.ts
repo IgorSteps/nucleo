@@ -1,5 +1,6 @@
 /// <reference path="componentmanager.ts" />
 
+import { vec3 } from "gl-matrix";
 import Shader from "../gl/shader";
 import AnimatedSprite from "../graphics/animatedSprite";
 import Sprite from "../graphics/sprite";
@@ -12,11 +13,11 @@ import { SpriteComponentData } from "./spriteComponent";
 
 export class AnimatedSpriteComponentData extends SpriteComponentData implements IComponentData{
 
-    
     public FrameWidth: number;
     public FrameHeight: number;
     public FrameCount: number;
     public FrameSequence: number[] = [];
+    public AutoPlay: boolean = true;
 
     public setFromJson(json: any): void {
         super.setFromJson(json);
@@ -46,6 +47,9 @@ export class AnimatedSpriteComponentData extends SpriteComponentData implements 
             this.FrameSequence = json.FrameSequence;
         }
 
+        if(json.AutoPlay !== undefined){
+            this.AutoPlay = Boolean(json.AutoPlay);
+        }
         
     }
 }
@@ -64,17 +68,32 @@ export class AnimatedSpriteComponentBuilder implements IComponentBuilder {
 }
 
 export default class AnimatedSpriteComponent extends Component {
+    private m_AutoPlay: boolean;
     private m_Sprite: AnimatedSprite;
 
     constructor(data: AnimatedSpriteComponentData) {
         super(data);
 
+        this.m_AutoPlay = data.AutoPlay;
         this.m_Sprite = new AnimatedSprite(this.name, data.materialName, data.FrameWidth, data.FrameHeight,
              data.FrameWidth, data.FrameHeight, data.FrameCount, data.FrameSequence);
+        if(!vec3.equals(vec3.create(), data.origin)) {
+            vec3.set(this.m_Sprite.origin, data.origin[0], data.origin[1], data.origin[2]);
+        }
+    }
+
+    public isPlaying(): boolean {
+        return this.m_Sprite.isPlaying;
     }
 
     public load(): void {
         this.m_Sprite.load();    
+    }
+
+    public updateReady(): void {
+        if(!this.m_AutoPlay) {
+            this.m_Sprite.stop();
+        }
     }
 
     public update(dt: number): void {
@@ -89,10 +108,16 @@ export default class AnimatedSpriteComponent extends Component {
        
         super.render(shader);
     }
+
+    public play(): void {
+        this.m_Sprite.play();
+    }
+
+    public stop(): void {
+        this.m_Sprite.stop();
+    }
+
+    public setFrame(frameNum: number): void {
+       this.m_Sprite.setFrame(frameNum);
+    }
 }
-
-// TODO: Why isn't this method call executed? 
-// Had to make an ComponentManager.init() that's called in the engine.ts
-// ComponentManager.registerBuilder(new SpriteComponentBuilder());
-
-

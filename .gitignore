@@ -9,3 +9,6 @@ node_modules
 
 # and package-lock
 package-lock.json
+
+# build files
+dist

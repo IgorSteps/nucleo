@@ -57,6 +57,7 @@ export default class Level {
         this.m_State = LevelState.LOADING;
 
         this.m_Scene.load()
+        this.m_Scene.root.updateReady();
 
         this.m_State = LevelState.UPDATING;
     }
