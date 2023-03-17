@@ -89,17 +89,17 @@ export default class CollisionComponent extends Component {
     }
 
     public onCollisionEntry(other: CollisionComponent) {
-        console.log("onCollisionEntry", this, other)
+        //console.log("onCollisionEntry", this, other)
 
     }
 
     public onCollisionUpdate(other: CollisionComponent) {
-        console.log("onCollisionUpdate", this, other)
+        //console.log("onCollisionUpdate", this, other)
 
     }
 
     public onCollisionExit(other: CollisionComponent) {
-        console.log("onCollisionExit", this, other)
+       // console.log("onCollisionExit", this, other)
 
     }
 
