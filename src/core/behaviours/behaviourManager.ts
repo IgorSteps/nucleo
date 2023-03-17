@@ -1,6 +1,7 @@
 import { IBehaviour } from "./IBehaviour";
 import { IBehaviourBuilder } from "./IBehaviourBuilder";
 import { KeyBoardMovementBehaviourBuilder } from "./keyBoardMovementBehaviour";
+import { PlayerBehaviourBuilder } from "./playerBehaviour";
 import { RotationBehaviour, RotationBehaviourBuilder } from "./rotationBehaviour";
 
 
@@ -13,6 +14,7 @@ export class BehaviourManager {
     public static init() {
         BehaviourManager.registerBuilder(new RotationBehaviourBuilder());
         BehaviourManager.registerBuilder(new KeyBoardMovementBehaviourBuilder());
+        BehaviourManager.registerBuilder(new PlayerBehaviourBuilder());
     }
 
     public static registerBuilder(builder: IBehaviourBuilder): void {
