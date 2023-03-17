@@ -49,6 +49,11 @@ export class CollisionManager {
                     continue;
                 }
 
+                // if both shapes are static - stop detection
+                if(component.isStatic && other.isStatic) {
+                    continue;
+                }
+
                 if(component.shape.intersects(other.shape)) {
 
                     // they are colliding

@@ -51,6 +51,14 @@ export default class Sprite{
         return this.m_Origin;
     }
 
+    public get width(): number {
+        return this.m_Width;
+    }
+
+    public get height(): number {
+        return this.m_Height;
+    }
+
     public set origin(v: vec3) {
         vec3.set(this.m_Origin, v[0], v[1], v[2]);
         this.recalculateVertices();

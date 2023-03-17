@@ -99,7 +99,6 @@ export default class Level {
             for (let c in dataSection.components) {
                 let data = dataSection.components[c];
                 let component = ComponentManager.extractComponent(data);
-                console.log(component)
                 simObject.addComponent(component);
             }
         }

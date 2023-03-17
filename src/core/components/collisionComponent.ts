@@ -1,10 +1,8 @@
 import { vec2, vec3 } from "gl-matrix";
 import { CollisionManager } from "../collision/collisionManager";
-import Shader from "../gl/shader";
 import Circle from "../graphics/shapes/circle";
 import IShape from "../graphics/shapes/IShape";
 import Rectangle from "../graphics/shapes/rectangle";
-import Sprite from "../graphics/sprite";
 import Component from "./component";
 import { IComponent } from "./IComponent";
 import { IComponentBuilder } from "./IComponentBuilder";
@@ -13,10 +11,14 @@ import { IComponentData } from "./IComponentData";
 export class CollisionComponentData implements IComponentData{
     public name: string;
     public shape: IShape;
+    public static: boolean = true;
 
     public setFromJson(json: any): void {
         if(json.name !== undefined) {
             this.name = String(json.name);
+        }
+        if(json.static !== undefined) {
+            this.static = Boolean(json.static);
         }
 
         if(json.shape === undefined) {
@@ -59,27 +61,33 @@ export class CollisionComponentBuilder implements IComponentBuilder {
 export default class CollisionComponent extends Component {
 
     private m_Shape: IShape;
+    private m_Static: boolean;
 
     constructor(data: CollisionComponentData) {
         super(data);
         this.m_Shape = data.shape;
+        this.m_Static = data.static;
+    }
+
+    public get isStatic (): boolean {
+        return this.m_Static;
     }
 
     public load(): void {
         super.load();
         // @TODO: problem with getting world position for nested objects
-        vec2.set(this.m_Shape.position, this.m_Owner.Transform.Position[0], this.m_Owner.Transform.Position[1]);
+        vec2.set(this.m_Shape.position, this.m_Owner.getWorldPosition()[0], this.m_Owner.getWorldPosition()[1]);
         // @TODO: hacky way to fix problem with collisions and origins - remove
-        vec2.add(this.m_Shape.position, this.m_Shape.position, this.m_Shape.offset);
+        vec2.subtract(this.m_Shape.position, this.m_Shape.position, this.m_Shape.offset);
 
         CollisionManager.registerCollisionComponent(this);
     }
 
     public update(dt: number): void {
         // @TODO: problem with getting world position for nested objects
-        vec2.set(this.m_Shape.position, this.m_Owner.Transform.Position[0], this.m_Owner.Transform.Position[1]);
+        vec2.set(this.m_Shape.position, this.m_Owner.getWorldPosition()[0], this.m_Owner.getWorldPosition()[1]);
         // @TODO: hacky way to fix problem with collisions and origins - remove
-        vec2.add(this.m_Shape.position, this.m_Shape.position, this.m_Shape.offset);
+        vec2.subtract(this.m_Shape.position, this.m_Shape.position, this.m_Shape.offset);
 
         super.update(dt);
     }

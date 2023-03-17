@@ -4,13 +4,13 @@ import IShape from "./IShape";
 
 export default class Rectangle implements IShape{
     public position: vec2 = vec2.create();
-    public origin: vec2 = vec2.fromValues( 0.5, 0.5 );
+    public origin: vec2 = vec2.create();
 
     public width: number;
     public height: number;
 
     public get offset(): vec2 {
-        return vec2.fromValues( -( this.width * this.origin[0] ), -( this.height * this.origin[1] ) );
+        return vec2.fromValues( ( this.width * this.origin[0] ), ( this.height * this.origin[1] ) );
     }
 
     public setFromJson(json: any): void {
@@ -35,12 +35,10 @@ export default class Rectangle implements IShape{
 
     public intersects(other: IShape): boolean {
         if(other instanceof Rectangle) {
-           if(this.pointInShape(other.position) ||
+           return (this.pointInShape(other.position) ||
             this.pointInShape(vec2.set(vec2.create(), other.position[0] + other.width, other.position[1])) ||
-            this.pointInShape(vec2.set(vec2.create(), other.position[0] + other.width, other.position[1] + this.height)) ||
-            this.pointInShape(vec2.set(vec2.create(), other.position[0], other.position[1] + this.height))) {
-                return true;
-            }
+            this.pointInShape(vec2.set(vec2.create(), other.position[0] + other.width, other.position[1] + other.height)) ||
+            this.pointInShape(vec2.set(vec2.create(), other.position[0], other.position[1] + other.height))) 
         }
 
         if(other instanceof Circle) {
@@ -55,10 +53,14 @@ export default class Rectangle implements IShape{
     }
 
     public pointInShape(point: vec2): boolean {
-        if(point[0] >= this.position[0] && point[0] <= this.position[0] + this.width) {
-            if(point[1] >= this.position[1] && point[1] <= this.position[1] + this.height) {
-                return true;
-            }
+        let x = this.width < 0 ? this.position[0] - this.width : this.position[0];
+        let y = this.height < 0 ? this.position[1] - this.height : this.position[1];
+
+        let extentX = this.width < 0 ? this.position[0] : this.position[0] + this.width;
+        let extentY = this.height < 0 ? this.position[1] : this.position[1] + this.height;
+
+        if(point[0] >= x && point[0] <= extentX && point[1] >= y && point[1] <= extentY ) {
+            return true;
         }
 
         return false;

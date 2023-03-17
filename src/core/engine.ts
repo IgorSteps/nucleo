@@ -63,6 +63,9 @@ export default class Engine implements IMessageHadnler{
         this.m_Projection = mat4.ortho(this.m_Projection, 0.0, this.m_Canvas.width, this.m_Canvas.height, 0.0, -100.0, 100.0);
         
         // Load Materials
+        MaterialManager.registerMaterial(new Material("bg", "../assets/textures/bg.png", new Colour(255, 255, 255, 255)));
+        MaterialManager.registerMaterial(new Material("end", "../assets/textures/end.png", new Colour(255, 255, 255, 255)));
+        MaterialManager.registerMaterial(new Material("middle", "../assets/textures/middle.png", new Colour(255, 255, 255, 255)));
         MaterialManager.registerMaterial(new Material("grass", "../assets/textures/grass.png", new Colour(255, 255, 255, 255)));
         MaterialManager.registerMaterial(new Material("duck", "../assets/textures/duck.png", new Colour(255, 255, 255, 255)));
 
@@ -73,7 +76,6 @@ export default class Engine implements IMessageHadnler{
 
         // Load test level
         LevelManager.changeLevel(0);
-
         this.resize()
         this.loop();
     }

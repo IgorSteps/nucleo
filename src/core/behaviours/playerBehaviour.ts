@@ -69,8 +69,11 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
    private m_PlayerCollisionComponent: string;
    private m_GroundCollisionComponent: string;
    private m_AnimatedSpriteName: string;
+   private m_IsPlaying: boolean = false;
+   private m_InitialPosition: vec3 = vec3.create();
 
    private m_Sprite: AnimatedSpriteComponent;
+   private m_PipeNames: string[] = ["pipe1CollisionEnding", "pipe1CollisionMiddleTop", "pipe1CollisionEndingNeg", "pipe1CollisionMiddleBottom"]
 
     constructor(data: PlayerBehaviourData) {
         super(data);
@@ -82,6 +85,10 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
 
         Message.subscribe("MOUSE_DOWN", this);
         Message.subscribe("COLLISION_ENTRY:"+this.m_PlayerCollisionComponent , this);
+
+        Message.subscribe("GAME_RESET", this);
+        Message.subscribe("GAME_START", this);
+
     }
 
     public updateReady(): void {
@@ -92,18 +99,23 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
         if(this.m_Sprite === undefined) {
             throw new Error("AnimatedSpriteComponent " + this.m_AnimatedSpriteName + " is not attached to the owqner of this component")
         }
+
+        // Make sure animation is playing right away
+        this.m_Sprite.setFrame(0);
+
+        // Store init position
+        vec3.copy(this.m_InitialPosition, this.m_Owner.Transform.Position);
     }
 
     public update(dt: number): void {
-        if(!this.m_IsAlive) {
-            return;
-        }
-
+    
         // Gravity
         let seconds: number = dt / 1000;
         let accelerationClone: vec2 = vec2.clone(this.m_Acceleration)
         let scaleVec: vec2 = vec2.scale(accelerationClone, accelerationClone, seconds);
-        vec2.add(this.m_Velocity, this.m_Velocity, scaleVec);
+        if(this.m_IsPlaying) {
+            vec2.add(this.m_Velocity, this.m_Velocity, scaleVec);
+        }
 
         // Limit max speed
         if(this.m_Velocity[1] > 400) {
@@ -139,7 +151,7 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
         if(this.shouldNotFlap()) {
             this.m_Sprite.stop();
         } else {
-            if(!this.m_Sprite.isPlaying()) {
+            if(!this.m_Sprite.isPlaying) {
                 this.m_Sprite.play();
             }
         }
@@ -157,9 +169,18 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
                 if(data.a.name === this.m_GroundCollisionComponent || data.b.name === this.m_GroundCollisionComponent) {
                     this.die();
                     this.decelerate();
-                    Message.send("PLAYER_DIED", this);
+                }
+                if(this.m_PipeNames.indexOf(data.a.name) !== -1 || this.m_PipeNames.indexOf(data.b.name) !== -1) {
+                    this.die();
                 }
                 break;
+            case "GAME_RESET":
+                this.reset()
+                break;
+            case "GAME_START":
+                this.start()
+                break;
+
         }
 
     }
@@ -169,12 +190,31 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
     }
 
     private shouldNotFlap(): boolean {
-        return this.m_Velocity[1] > 220.0 || !this.m_IsAlive;
+        return this.m_IsPlaying || this.m_Velocity[1] > 220.0 || !this.m_IsAlive;
     }
 
     private die(): void {
-        this.m_IsAlive = false;
-        AudioManager.playSound("dead"); 
+        if(this.m_IsAlive){
+            this.m_IsAlive = false;
+            AudioManager.playSound("dead");
+            Message.send("PLAYER_DIED", this);
+        }
+    }
+
+    private reset(): void {
+        this.m_IsAlive = true;
+        this.m_IsPlaying = false;
+        vec3.copy(this.m_Sprite.owner.Transform.Position, this.m_InitialPosition)
+        this.m_Sprite.owner.Transform.Rotation = 0;
+
+        vec2.zero(this.m_Velocity);
+        vec2.set(this.m_Acceleration, 0,920);
+        this.m_Sprite.play();
+    }
+
+    private start(): void {
+        this.m_IsPlaying = true;
+        Message.send("PLAYER_RESET", this)
     }
 
     private decelerate(): void {
@@ -183,7 +223,7 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
     }
 
     private onFlap(): void {
-        if(this.m_IsAlive) {
+        if(this.m_IsAlive && this.m_IsPlaying) {
             this.m_Velocity[1] = -280.0; 
             AudioManager.playSound("flap");
         }
