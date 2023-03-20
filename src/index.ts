@@ -1,4 +1,5 @@
 import Engine from './core/engine'
+import Message from './core/message/message';
 import "./index.css"
 
 var engine: Engine;
@@ -10,4 +11,6 @@ window.onload = function () {
 
 window.onresize = () => {
     engine.resize()
+    Message.send("GAME_START", undefined)
+
 }

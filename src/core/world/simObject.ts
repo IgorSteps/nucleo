@@ -1,4 +1,4 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import { re } from "mathjs";
 import { IBehaviour } from "../behaviours/IBehaviour";
 import Component from "../components/component";
@@ -171,6 +171,11 @@ export default class SimObject {
         for(let c of this.m_Children) {
             c.render(shader)
         }
+    }
+
+     /** Returns the world position of this entity. */
+     public getWorldPosition(): vec3 {
+        return vec3.fromValues(this.m_WorldMatrix[12], this.m_WorldMatrix[13], this.m_WorldMatrix[14])
     }
 
 

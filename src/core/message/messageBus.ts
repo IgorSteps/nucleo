@@ -15,7 +15,7 @@ export default class MessageBus {
             MessageBus.m_Subscriptions[code] = [];
         } 
         if (MessageBus.m_Subscriptions[code].indexOf(handler) !== -1) {
-            console.warn(`Attempting to add duplicate handler to code ${code}. Subscription not added`)
+            console.warn(`Attempting to add duplicate handler to code "${code}". Subscription not added`)
         } else {
             MessageBus.m_Subscriptions[code].push(handler);
         }
