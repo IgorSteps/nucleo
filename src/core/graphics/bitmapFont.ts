@@ -51,7 +51,11 @@ export class BitmapFont implements IMessageHadnler{
     private m_ImageWidth: number; 
     private m_ImageHeight: number; 
 
-
+    constructor(name: string, fontFileName: string) {
+        this.m_Name = name;
+        this.m_FontFileName = fontFileName;
+    }
+    
     public get name(): string {
         return this.m_Name;
     }

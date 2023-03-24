@@ -1,4 +1,5 @@
 import { AnimatedSpriteComponentBuilder } from "./animatedSpriteComponent";
+import { BitmapTextComponentBuilder } from "./bitmapTextComponent";
 import { CollisionComponentBuilder } from "./collisionComponent";
 import { IComponent } from "./IComponent";
 import { IComponentBuilder } from "./IComponentBuilder";
@@ -14,6 +15,7 @@ export class ComponentManager {
         ComponentManager.registerBuilder(new SpriteComponentBuilder());
         ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
         ComponentManager.registerBuilder(new CollisionComponentBuilder());
+        ComponentManager.registerBuilder(new BitmapTextComponentBuilder());
     }
 
     public static registerBuilder(builder: IComponentBuilder): void {

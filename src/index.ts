@@ -11,6 +11,6 @@ window.onload = function () {
 
 window.onresize = () => {
     engine.resize()
-    Message.send("GAME_START", undefined)
+   //Message.send("GAME_START", undefined)
 
 }

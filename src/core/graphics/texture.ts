@@ -25,7 +25,6 @@ export default class Texture implements IMessageHadnler{
 
         
         this.m_Handle = gl.createTexture();
-        Message.subscribe(MSG_ASSET_LOADER_ASSET_LOADED + this.m_Name, this);
 
         this.bind()
 
@@ -35,6 +34,8 @@ export default class Texture implements IMessageHadnler{
         let asset = AssetManager.getAsset(this.m_Name) as ImageAsset;
         if(asset !== undefined) {
             this.loadTextureFromAsset(asset);
+        } else {
+            Message.subscribe(MSG_ASSET_LOADER_ASSET_LOADED + this.m_Name, this);
         }
     }
     

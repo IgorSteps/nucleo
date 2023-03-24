@@ -16,6 +16,8 @@ import IMessageHadnler from "./message/IMessageHandler";
 import Message from "./message/message";
 import AudioManager from "./audio/audioManager";
 import { CollisionManager } from "./collision/collisionManager";
+import FontManager from "./graphics/fontManager";
+import Level from "./world/level";
 
 export default class Engine implements IMessageHadnler{
 
@@ -62,6 +64,10 @@ export default class Engine implements IMessageHadnler{
         this.m_Projection = mat4.create();
         this.m_Projection = mat4.ortho(this.m_Projection, 0.0, this.m_Canvas.width, this.m_Canvas.height, 0.0, -100.0, 100.0);
         
+        // Load fonts
+        FontManager.addFont("default", "../assets/fonts/text.txt");
+        FontManager.load();
+
         // Load Materials
         MaterialManager.registerMaterial(new Material("bg", "../assets/textures/bg.png", new Colour(255, 255, 255, 255)));
         MaterialManager.registerMaterial(new Material("end", "../assets/textures/end.png", new Colour(255, 255, 255, 255)));
@@ -74,10 +80,11 @@ export default class Engine implements IMessageHadnler{
         AudioManager.loadSoundFile("ting", "../assets/audio/ting.mp3", false);
         AudioManager.loadSoundFile("dead", "../assets/audio/dead.mp3", false);
 
-        // Load test level
-        LevelManager.changeLevel(0);
+        
         this.resize()
-        this.loop();
+        
+        // Begin preloading phase
+        this.preload()
     }
 
 
@@ -98,6 +105,7 @@ export default class Engine implements IMessageHadnler{
     private loop(): void {
         this.update()
         this.render()
+        requestAnimationFrame( this.loop.bind( this ) );
     }
 
     private update(): void {
@@ -108,13 +116,28 @@ export default class Engine implements IMessageHadnler{
         this.m_PreviousTime = performance.now();
     }
 
+    private preload(): void {
+        // Make sure to always update the message bus
+        MessageBus.update(0);
+
+        if(!FontManager.updateReady()) {
+            requestAnimationFrame(this.preload.bind(this));
+            return
+        }
+
+        // Load level
+        LevelManager.changeLevel(0);
+
+        // Start game loop
+        this.loop();
+    }
+
     private render(): void {
         gl.clear(gl.COLOR_BUFFER_BIT);
         let projPos = this.m_BasicShader.getUniformLocation("u_projection");
         gl.uniformMatrix4fv(projPos, false, new Float32Array(this.m_Projection))
         LevelManager.render(this.m_BasicShader);
 
-        requestAnimationFrame( this.loop.bind( this ) );
     }
 
     public onMessage(msg: Message): void {

@@ -13,9 +13,8 @@ export default class TextAsset implements IAsset {
 }
 
 export class TextAssetLoader implements IAssetLoader{
-    supportedExts: string[];
 
-    public get supportedExtenions(): string[] {
+    public get supportedExts(): string[] {
         return ["txt"];
     }
 
