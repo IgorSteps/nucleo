@@ -11,6 +11,8 @@ export class ScrollBehaviourData implements IBehaviourData {
     public velocity: vec2 = vec2.create();
     public minPosition: vec2 = vec2.create();
     public resetPosition: vec2 = vec2.create();
+    public minResetY: number;
+    public maxResetY: number;
     public startMessage: string;
     public stopMessage: string;
     public resetMessage: string;
@@ -51,13 +53,21 @@ export class ScrollBehaviourData implements IBehaviourData {
         } else {
             throw new Error("Behaviour is missing a resetPosition")
         }
+
+        if (json.minResetY !== undefined) {
+            this.minResetY = Number(json.minResetY);
+        }
+
+        if (json.maxResetY !== undefined) {
+            this.maxResetY = Number(json.maxResetY);
+        }
         
     }
 }
 
 export class ScrollBehaviourBuilder implements IBehaviourBuilder {
     public get type(): string {
-        return "scroller";
+        return "scroll";
     }
 
     public buildFromJson(json: any): IBehaviour {
@@ -73,6 +83,8 @@ export class ScrollBehaviour extends Behaviour implements IMessageHadnler{
     private m_Velocity: vec2 = vec2.create();
     private m_MinPosition: vec2 = vec2.create();
     private m_ResetPosition: vec2 = vec2.create();
+    private m_MinResetY: number;
+    private m_MaxResetY: number;
     private m_StartMessage: string;
     private m_StopMessage: string;
     private m_ResetMessage: string;
@@ -85,6 +97,15 @@ export class ScrollBehaviour extends Behaviour implements IMessageHadnler{
         vec2.copy(this.m_Velocity, data.velocity);
         vec2.copy(this.m_MinPosition, data.minPosition);
         vec2.copy(this.m_ResetPosition, data.resetPosition);
+
+        if (data.minResetY !== undefined) {
+            this.m_MinResetY = data.minResetY;
+        }
+
+        if (data.maxResetY !== undefined) {
+            this.m_MaxResetY = data.maxResetY;
+        }
+
         this.m_StartMessage = data.startMessage;
         this.m_StopMessage = data.stopMessage;
         this.m_ResetMessage = data.resetMessage;
@@ -115,10 +136,11 @@ export class ScrollBehaviour extends Behaviour implements IMessageHadnler{
             let convertedToVec3: vec3 = vec3.fromValues(scale[0], scale[1], 0);
             vec3.add(this.m_Owner.Transform.Position, this.m_Owner.Transform.Position, convertedToVec3);
 
-            if(this.m_Owner.Transform.Position[0] <= this.m_MinPosition[0] &&
-                this.m_Owner.Transform.Position[1] <= this.m_MinPosition[1]) {
+            let scrollY = this.m_MinResetY !== undefined && this.m_MaxResetY !== undefined;
+            if (this.m_Owner.Transform.Position[0] <= this.m_MinPosition[0] &&
+                (scrollY || (!scrollY && this.m_Owner.Transform.Position[1] <= this.m_MinPosition[1]))) {
 
-                    this.reset();
+                this.reset();
             }
         }
     }
@@ -135,6 +157,16 @@ export class ScrollBehaviour extends Behaviour implements IMessageHadnler{
 
     private reset(): void {
         vec3.copy(this.m_Owner.Transform.Position, vec3.fromValues(this.m_ResetPosition[0],this.m_ResetPosition[1], 0))
+        if (this.m_MinResetY !== undefined && this.m_MaxResetY !== undefined) {
+            vec3.set(this.m_Owner.Transform.Position, this.m_ResetPosition[0], this.getRandomY(), 0);
+        } else {
+            vec3.copy(this.m_Owner.Transform.Position, vec3.fromValues(this.m_ResetPosition[0],this.m_ResetPosition[1], 0))
+        }
+    }
+
+    private getRandomY(): number {
+        // Inclusive of the min and max set in the data.
+        return Math.floor(Math.random() * (this.m_MaxResetY - this.m_MinResetY + 1)) + this.m_MinResetY;
     }
 
     private initial(): void {

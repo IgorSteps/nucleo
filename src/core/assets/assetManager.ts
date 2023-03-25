@@ -3,6 +3,7 @@ import { IAsset } from "./IAsset";
 import IAssetLoader from "./IAssetLoader";
 import ImageAssetLoader from "./imageAssetLoader";
 import JsonAssetLoader, { JsonAsset } from "./jsonAssetLoader";
+import { TextAssetLoader } from "./textAssetLoader";
 
 export const MSG_ASSET_LOADER_ASSET_LOADED = "MSG_ASSET_LOADER_ASSET_LOADED::";
 
@@ -17,6 +18,7 @@ export default class AssetManager {
     public static init(): void {
         AssetManager.m_Loaders.push(new ImageAssetLoader());
         AssetManager.m_Loaders.push(new JsonAssetLoader());
+        AssetManager.m_Loaders.push(new TextAssetLoader());
     }
 
      /**

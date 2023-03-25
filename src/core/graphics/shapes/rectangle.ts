@@ -9,6 +9,13 @@ export default class Rectangle implements IShape{
     public width: number;
     public height: number;
 
+    constructor(x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
+        this.position[0] = x;
+        this.position[1] = y;
+        this.width = width;
+        this.height = height;
+    }
+
     public get offset(): vec2 {
         return vec2.fromValues( ( this.width * this.origin[0] ), ( this.height * this.origin[1] ) );
     }
@@ -35,10 +42,10 @@ export default class Rectangle implements IShape{
 
     public intersects(other: IShape): boolean {
         if(other instanceof Rectangle) {
-           return (this.pointInShape(other.position) ||
-            this.pointInShape(vec2.set(vec2.create(), other.position[0] + other.width, other.position[1])) ||
-            this.pointInShape(vec2.set(vec2.create(), other.position[0] + other.width, other.position[1] + other.height)) ||
-            this.pointInShape(vec2.set(vec2.create(), other.position[0], other.position[1] + other.height))) 
+            let a = this.getExtents(this);
+            let b = this.getExtents(other);
+
+            return (a.position[0] <= b.width && a.width >= b.position[0]) && (a.position[1] <= b.height && a.height >= b.position[1]);
         }
 
         if(other instanceof Circle) {
@@ -64,5 +71,15 @@ export default class Rectangle implements IShape{
         }
 
         return false;
+    }
+
+    private getExtents(shape: Rectangle): Rectangle {
+        let x = shape.width < 0 ? shape.position[0] - shape.width : shape.position[0];
+        let y = shape.height < 0 ? shape.position[1] - shape.height : shape.position[1];
+
+        let extentX = shape.width < 0 ? shape.position[0] : shape.position[0] + shape.width;
+        let extentY = shape.height < 0 ? shape.position[1] : shape.position[1] + shape.height;
+
+        return new Rectangle(x, y, extentX, extentY);
     }
 }

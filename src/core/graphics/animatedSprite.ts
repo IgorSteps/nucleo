@@ -16,15 +16,26 @@ class UVInfo {
     }
 }
 
+export class AnimatedSpriteInfo {
+    public name: string;
+    public materialName: string;
+    public width: number = 100;
+    public height: number = 100;
+    public frameWidth: number = 10;
+    public frameHeight: number = 10;
+    public frameCount: number = 1;
+    public frameSequence: number[] = [];
+    public frameTime: number = 60;
+}
+
 export default class AnimatedSprite extends Sprite implements IMessageHandler{
 
     private m_FrameWidth: number;
     private m_FrameHeight: number;
     private m_FrameCount: number;
     private m_FrameSequance: number[];
-    // @TODO: Probalby needs to be configurable
     // Frames per second
-    private m_FrameTime: number = 333;
+    private m_FrameTime: number = 33;
     private m_FrameUVs: UVInfo[] = [];
 
     private m_CurrentFrame: number = 0;
@@ -36,14 +47,14 @@ export default class AnimatedSprite extends Sprite implements IMessageHandler{
 
     private m_IsPlaying: boolean = true;
    
-    constructor(name: string, materialName: string, width: number = 100, height: number = 100,
-        frameWidth: number = 10, frameHeight: number = 10,  frameCount: number = 1, frameSequance: number[]=[]) {
-        super(name, materialName, width, height);
+    constructor(info: AnimatedSpriteInfo) {
+        super(info.name, info.materialName, info.width, info.height);
 
-        this.m_FrameWidth = frameWidth;
-        this.m_FrameHeight = frameHeight;
-        this.m_FrameCount = frameCount;
-        this.m_FrameSequance = frameSequance;
+        this.m_FrameWidth = info.frameWidth;
+        this.m_FrameHeight = info.frameHeight;
+        this.m_FrameCount = info.frameCount;
+        this.m_FrameSequance = info.frameSequence;
+        this.m_FrameTime = info.frameTime;
 
         Message.subscribe(MSG_ASSET_LOADER_ASSET_LOADED + this.m_Material.diffuseTexName, this);
     }

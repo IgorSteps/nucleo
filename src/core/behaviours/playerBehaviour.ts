@@ -17,6 +17,7 @@ export class PlayerBehaviourData implements IBehaviourData {
     public playerCollisionComponent: string;
     public groundCollisionComponent: string;
     public animatedSpriteName: string;
+    public scoreCollisionComponent: string;
     
     public setFromJson(json: any): void {
         if(json.name === undefined) {
@@ -45,6 +46,12 @@ export class PlayerBehaviourData implements IBehaviourData {
         } else {
             this.groundCollisionComponent = String(json.groundCollisionComponent);
         }
+
+        if(json.scoreCollisionComponent === undefined) {
+            throw new Error("Behaviour data is missing a scoreCollisionComponent.");
+        } else {
+            this.scoreCollisionComponent = String(json.scoreCollisionComponent);
+        }
     }
 
 }
@@ -68,26 +75,32 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
    private m_IsAlive: boolean = true;
    private m_PlayerCollisionComponent: string;
    private m_GroundCollisionComponent: string;
+   private m_ScroteCollisionComponent: string;
    private m_AnimatedSpriteName: string;
    private m_IsPlaying: boolean = false;
    private m_InitialPosition: vec3 = vec3.create();
+   private m_Score: number = 0;
+   private m_HighScore: number = 0;
 
    private m_Sprite: AnimatedSpriteComponent;
-   private m_PipeNames: string[] = ["pipe1CollisionEnding", "pipe1CollisionMiddleTop", "pipe1CollisionEndingNeg", "pipe1CollisionMiddleBottom"]
-
+   private m_PipeNames: string[] = ["pipe1Collision_end", "pipe1Collision_middle_top", "pipe1Collision_endneg", "pipe1Collision_middle_bottom"];
     constructor(data: PlayerBehaviourData) {
         super(data);
 
         this.m_Acceleration = data.acceleration;
         this.m_GroundCollisionComponent = data.groundCollisionComponent;
         this.m_PlayerCollisionComponent = data.playerCollisionComponent;
+        this.m_ScroteCollisionComponent = data.scoreCollisionComponent;
         this.m_AnimatedSpriteName = data.animatedSpriteName;
 
         Message.subscribe("MOUSE_DOWN", this);
-        Message.subscribe("COLLISION_ENTRY:"+this.m_PlayerCollisionComponent , this);
+        Message.subscribe("COLLISION_ENTRY" , this);
 
+        Message.subscribe("GAME_READY", this);
         Message.subscribe("GAME_RESET", this);
         Message.subscribe("GAME_START", this);
+        Message.subscribe("PLAYER_DIED", this);
+
 
     }
 
@@ -164,23 +177,47 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
             case "MOUSE_DOWN":
                 this.onFlap();
                 break;
-            case "COLLISION_ENTRY:"+this.m_PlayerCollisionComponent:
+            case "COLLISION_ENTRY":
                 let data: CollisionData = msg.Context as CollisionData;
-                if(data.a.name === this.m_GroundCollisionComponent || data.b.name === this.m_GroundCollisionComponent) {
-                    this.die();
-                    this.decelerate();
+                if (data.a.name !== this.m_PlayerCollisionComponent && data.b.name !== this.m_PlayerCollisionComponent) {
+                    return;
                 }
-                if(this.m_PipeNames.indexOf(data.a.name) !== -1 || this.m_PipeNames.indexOf(data.b.name) !== -1) {
+                if (data.a.name === this.m_GroundCollisionComponent || data.b.name === this.m_GroundCollisionComponent) {                    this.die();
+                    this.decelerate();
+                } else if (this.m_PipeNames.indexOf(data.a.name) !== -1 || this.m_PipeNames.indexOf(data.b.name) !== -1) {
                     this.die();
+                } else if (data.a.name === this.m_ScroteCollisionComponent || data.b.name === this.m_ScroteCollisionComponent) {
+                    if (this.m_IsAlive && this.m_IsPlaying) {
+                        this.setScore(this.m_Score + 1);
+                        AudioManager.playSound("ting");
+                    }
                 }
                 break;
             case "GAME_RESET":
+                Message.send("GAME_HIDE", this);
+                Message.send("RESET_HIDE", this);
+                Message.send("SPLASH_HIDE", this);
+                Message.send("TUTORIAL_SHOW", this);
                 this.reset()
                 break;
             case "GAME_START":
+                Message.send("GAME_SHOW", this);
+                Message.send("RESET_HIDE", this);
+                Message.send("SPLASH_HIDE", this);
+                Message.send("TUTORIAL_HIDE", this);
+                this.m_IsAlive = true;
+                this.m_IsPlaying = true;
                 this.start()
                 break;
-
+            case "GAME_READY":
+                Message.send("RESET_HIDE", this);
+                Message.send("TUTORIAL_HIDE", this);
+                Message.send("GAME_HIDE", this);
+                Message.send("SPLASH_SHOW", this);
+                break;
+            case "PLAYER_DIED":
+                Message.send("RESET_SHOW", this);
+                break;
         }
 
     }
@@ -190,7 +227,7 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
     }
 
     private shouldNotFlap(): boolean {
-        return this.m_IsPlaying || this.m_Velocity[1] > 220.0 || !this.m_IsAlive;
+        return !this.m_IsPlaying || this.m_Velocity[1] > 220.0 || !this.m_IsAlive;
     }
 
     private die(): void {
@@ -206,6 +243,7 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
         this.m_IsPlaying = false;
         vec3.copy(this.m_Sprite.owner.Transform.Position, this.m_InitialPosition)
         this.m_Sprite.owner.Transform.Rotation = 0;
+        this.setScore(0);
 
         vec2.zero(this.m_Velocity);
         vec2.set(this.m_Acceleration, 0,920);
@@ -229,12 +267,15 @@ export class PlayerBehaviour extends Behaviour implements IMessageHadnler{
         }
     }
 
-    private onRestart(y: number): void {
-        this.m_Owner.Transform.Rotation = 0;
-        vec3.set(this.m_Owner.Transform.Position, 33, y, 1);
-        vec2.set(this.m_Velocity, 0,0);
-        vec2.set(this.m_Acceleration, 0,920);
-        this.m_IsAlive = true;
-        this.m_Sprite.play();
+    private setScore(score: number): void {
+        this.m_Score = score;
+            Message.send("counterText:SetText", this, this.m_Score);
+            Message.send("scoreText:SetText", this, this.m_Score);
+
+            if (this.m_Score > this.m_HighScore) {
+                this.m_HighScore = this.m_Score;
+                Message.send("bestText:SetText", this, this.m_HighScore);
+            }
     }
+
 }

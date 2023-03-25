@@ -6,11 +6,9 @@ var engine: Engine;
 // the main entry point to the application
 window.onload = function () {
     engine = new Engine(320, 480);
-    engine.start();
+    engine.start("viewport");
 }
 
 window.onresize = () => {
     engine.resize()
-    Message.send("GAME_START", undefined)
-
 }

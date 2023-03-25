@@ -82,6 +82,8 @@ export default class LevelManager implements IMessageHadnler {
         LevelManager.m_ActiveLevel.init(levelData);
         LevelManager.m_ActiveLevel.onActivated();
         LevelManager.m_ActiveLevel.load();
+
+        Message.send("GAME_READY", this);
     }
 
     public onMessage(message: Message): void{

@@ -15,6 +15,7 @@ export default class SimObject {
     private m_Scene: Scene; 
     private m_LocalMatrix: mat4 = mat4.create();
     private m_WorldMatrix: mat4 = mat4.create();
+    private m_Visible: boolean = true;
 
     private m_Components: IComponent[] = [];
     private m_Behaviours: IBehaviour[] = [];
@@ -43,6 +44,14 @@ export default class SimObject {
 
     public get isLoaded(): boolean {
         return this.m_IsLoaded;
+    }
+
+    public get isVisible(): boolean {
+        return this.m_Visible;
+    }
+
+    public set isVisible(v: boolean) {
+        this.m_Visible = v;
     }
 
     public addChild(child: SimObject): void {
@@ -164,6 +173,10 @@ export default class SimObject {
     }
 
     public render(shader: Shader): void {
+        if(!this.m_Visible) {
+            return;
+        }
+        
         for (let c of this.m_Components) {
             c.render(shader);
         }
