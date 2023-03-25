@@ -1,21 +1,14 @@
-# 2D Game Engine
+# 2D Game Engine + a Flappy bird type of game
 
 Built with TS and WebGL2.
 
-# Dependencies
-This engine relies on these to run a Prod build:
- * gl-matrix
- * lodash
+Learning exercise on how to make a game engine with a graphics API like WebGL
 
-There are some dev dependecies, see [package.json](https://github.com/IgorSteps/nucleo/blob/master/package.json) for them.
-
-To install, run 
+To install dependecies
 ```
 npm i
 ```
-
-# Running locally
-Compile 
+Build 
 ```
 npm run build
 ```
