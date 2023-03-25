@@ -1,6 +1,8 @@
 import { vec3 } from "gl-matrix";
 import Shader from "../gl/shader";
 import { BitmapText } from "../graphics/bitmapText";
+import IMessageHadnler from "../message/IMessageHandler";
+import Message from "../message/message";
 import Component from "./component";
 import { IComponent } from "./IComponent";
 import { IComponentBuilder } from "./IComponentBuilder";
@@ -34,7 +36,7 @@ export class BitmapTextComponentData implements IComponentData{
 export class BitmapTextComponentBuilder implements IComponentBuilder{
 
     public get type(): string {
-        return "bitmapFont";
+        return "bitmapText";
     }
     
     public buildFromJson(json: any): IComponent {
@@ -44,7 +46,7 @@ export class BitmapTextComponentBuilder implements IComponentBuilder{
     }
 }
 
-export class BitmapTextComponent extends Component {
+export class BitmapTextComponent extends Component implements IMessageHadnler{
     private m_BitmapText: BitmapText;
     private m_FontName: string;
 
@@ -58,6 +60,8 @@ export class BitmapTextComponent extends Component {
         }
 
         this.m_BitmapText.text = data.text;
+
+        Message.subscribe(this.name + ":SetText", this)
     }
 
     public load(): void {
@@ -72,5 +76,12 @@ export class BitmapTextComponent extends Component {
     public render(shader: Shader): void {
         this.m_BitmapText.draw(shader, this.m_Owner.worldMatrix);
         super.render(shader)
+    }
+
+
+    public onMessage(msg: Message): void {
+        if(msg.Code === this.name + ":SetText") {
+            this.m_BitmapText.text = String(msg.Context);
+        }
     }
 }

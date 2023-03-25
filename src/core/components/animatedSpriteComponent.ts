@@ -2,7 +2,7 @@
 
 import { vec3 } from "gl-matrix";
 import Shader from "../gl/shader";
-import AnimatedSprite from "../graphics/animatedSprite";
+import AnimatedSprite, { AnimatedSpriteInfo } from "../graphics/animatedSprite";
 import Sprite from "../graphics/sprite";
 import Component from "./component";
 import { ComponentManager } from "./componentManager";
@@ -18,6 +18,7 @@ export class AnimatedSpriteComponentData extends SpriteComponentData implements 
     public FrameCount: number;
     public FrameSequence: number[] = [];
     public AutoPlay: boolean = true;
+    public FrameTime: number = 33
 
     public setFromJson(json: any): void {
         super.setFromJson(json);
@@ -50,6 +51,10 @@ export class AnimatedSpriteComponentData extends SpriteComponentData implements 
         if(json.AutoPlay !== undefined){
             this.AutoPlay = Boolean(json.AutoPlay);
         }
+
+        if(json.FrameTime !== undefined){
+            this.FrameTime = Number(json.FrameTime);
+        }
         
     }
 }
@@ -75,8 +80,19 @@ export default class AnimatedSpriteComponent extends Component {
         super(data);
 
         this.m_AutoPlay = data.AutoPlay;
-        this.m_Sprite = new AnimatedSprite(this.name, data.materialName, data.FrameWidth, data.FrameHeight,
-             data.FrameWidth, data.FrameHeight, data.FrameCount, data.FrameSequence);
+
+        let spriteInfo = new AnimatedSpriteInfo();
+        spriteInfo.name = this.name;
+        spriteInfo.materialName = data.materialName;
+        spriteInfo.frameWidth = data.FrameWidth;
+        spriteInfo.frameHeight = data.FrameHeight;
+        spriteInfo.width = data.FrameWidth;
+        spriteInfo.height = data.FrameHeight;
+        spriteInfo.frameCount = data.FrameCount
+        spriteInfo.frameSequence = data.FrameSequence;
+        spriteInfo.frameTime = data.FrameTime;
+
+        this.m_Sprite = new AnimatedSprite(spriteInfo);
         if(!vec3.equals(vec3.create(), data.origin)) {
             vec3.set(this.m_Sprite.origin, data.origin[0], data.origin[1], data.origin[2]);
         }

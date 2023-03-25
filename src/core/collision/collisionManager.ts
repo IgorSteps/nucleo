@@ -76,8 +76,7 @@ export class CollisionManager {
                         let collision = new CollisionData(CollisionManager.m_TotalTime, component, other);
                         component.onCollisionEntry(other);
                         other.onCollisionEntry(component);
-                        Message.sendPriority("COLLISION_ENTRY:"+component.name, this, collision)
-                        Message.sendPriority("COLLISION_ENTRY:"+other.name, this, collision)
+                        Message.sendPriority("COLLISION_ENTRY", undefined, collision)
                         this.m_CollisionData.push(collision); 
                     }
                 }
@@ -103,8 +102,7 @@ export class CollisionManager {
             data.a.onCollisionExit(data.b);
             data.b.onCollisionExit(data.a);
 
-            Message.sendPriority("COLLISION_EXIT:"+data.a.name, this, data)
-            Message.sendPriority("COLLISION_EXIT:"+data.b.name, this, data)
+            Message.sendPriority("COLLISION_EXIT", undefined, data)
         }  
     }
 }
